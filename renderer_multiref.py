@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
-"""Renderer cho chuoi MV nhung nhan NHIEU REF, giong wf Ultra Speed Singularity.
+"""MV chain renderer that accepts MANY references, like the Ultra Speed workflow.
 
-Van de: node Renderer cua T8 viet cung mot slot tham chieu duy nhat -
-mv_lipsync_advanced.py dong 1649:
+The problem: T8's renderer hard-codes a single reference slot -
+mv_lipsync_advanced.py line 1649:
 
     {"ref_image_1": reference_image},
 
-Trong khi ham dung ben duoi (conditioning.py:392) chap nhan toi 9 anh, 3 video
-va 3 audio. Tam anh con lai bi bo phi.
+while the builder underneath (conditioning.py:392) accepts up to 9 images,
+3 videos and 3 audios. The other eight image slots go to waste.
 
-Cach lam o day: KHONG sua file cua T8 (sua la mat khi ho cap nhat). Thay vao do
-goi lai dung ham render cua T8, nhung trong luc no chay thi tam thoi boc
-build_conditioning de chen them ref vao cai dict kia. Chay xong tra lai nguyen
-trang.
+The approach here: do NOT patch T8's files - a patch dies on their next
+update. Instead call T8's own render function and, for the duration of that
+call, wrap build_conditioning so it injects the extra references into that
+dict. Everything is restored afterwards.
 
-De model THAT SU dung anh thu hai, prompt phai goi ten no bang the <Picture 2>.
-He the nam o prompt_tags.py. Viet the trong custom_global_prompt cua node
-MV Auto Director, no se chay xuong tung canh.
+For the model to actually USE the second image, the prompt has to name it with
+a <Picture 2> tag. That tag system lives in prompt_tags.py. Write the tag in
+MV Auto Director's custom_global_prompt and it flows down into every scene.
 """
 import contextlib
 import hashlib
@@ -25,13 +25,13 @@ import sys
 MAX_IMAGES, MAX_VIDEOS, MAX_AUDIOS = 9, 3, 3
 
 def _sampler_options():
-    """Danh sach sampler/scheduler LAY TU T8, khong lay tu comfy.samplers.
+    """Sampler/scheduler lists taken FROM T8, not from comfy.samplers.
 
-    T8 tu them 'dual_clock_euler', 'native_flow', 'beta57' - ba cai nay khong
-    co trong danh sach chuan. Lay nham la workflow cu bao
-    'Value not in list' y het loi busy_background hom truoc.
+    T8 adds 'dual_clock_euler', 'native_flow' and 'beta57', none of which exist
+    in the stock lists. Building the menu from the stock lists makes every saved
+    workflow fail with 'Value not in list'.
 
-    Do luoi vi luc pack nay nap thi T8 co the chua nap xong.
+    Resolved lazily, because T8 may not have finished loading when this pack does.
     """
     for name, mod in list(sys.modules.items()):
         if name.endswith("h3_t8.sampling") and hasattr(mod, "SAMPLER_OPTIONS"):
@@ -46,10 +46,10 @@ def _sampler_options():
 
 
 def _t8_module():
-    """Tim module mv_lipsync_advanced cua T8 trong sys.modules.
+    """Find T8's mv_lipsync_advanced module in sys.modules.
 
-    Khong import theo ten duoc vi thu muc pack co dau gach ngang. Nhung
-    ComfyUI da nap no roi, nen chi viec do trong sys.modules.
+    It cannot be imported by name because the pack folder contains a hyphen.
+    ComfyUI has already loaded it, so just look it up.
     """
     for name, mod in list(sys.modules.items()):
         if name.endswith("h3_t8.mv_lipsync_advanced") and hasattr(
@@ -57,8 +57,8 @@ def _t8_module():
         ):
             return mod
     raise RuntimeError(
-        "MV Renderer Multi-Ref: khong tim thay module mv_lipsync_advanced cua "
-        "comfyui-minimax-h3-audio-T8. Pack do da duoc cai va nap chua?")
+        "MV Renderer Multi-Ref: could not find the mv_lipsync_advanced module of "
+        "comfyui-minimax-h3-audio-T8. Is that node pack installed and loaded?")
 
 
 def _is_ref_image_dict(obj):
@@ -67,13 +67,13 @@ def _is_ref_image_dict(obj):
 
 @contextlib.contextmanager
 def _inject(mod, images, videos, video_audios, audios):
-    """Boc build_conditioning trong pham vi module cua T8 de chen them ref."""
+    """Wrap build_conditioning inside T8's module namespace to inject refs."""
     original = mod.build_conditioning
 
     def wrapped(*args, **kwargs):
         args = list(args)
-        # Tim vi tri dict ref_images. Do theo NOI DUNG chu khong theo so thu tu,
-        # de T8 co doi chu ky ham thi van chay.
+        # Locate the ref_images dict by CONTENT rather than argument position,
+        # so a signature change upstream does not break this.
         at = None
         for i, a in enumerate(args):
             if _is_ref_image_dict(a):
@@ -99,8 +99,8 @@ def _inject(mod, images, videos, video_audios, audios):
         for n, img in enumerate(images, len(d) + 1):
             d["ref_image_%d" % n] = img
         args[at] = d
-        # Thu tu trong chu ky: ref_images, ref_videos, ref_video_audios, ref_audios.
-        # Chuoi MV dang truyen None cho ca ba cai sau.
+        # Signature order: ref_images, ref_videos, ref_video_audios, ref_audios.
+        # The MV chain currently passes None for the last three.
         if videos and at + 1 < len(args):
             args[at + 1] = {"ref_video_%d" % n: v for n, v in enumerate(videos, 1)}
         if video_audios and at + 2 < len(args):
@@ -117,7 +117,7 @@ def _inject(mod, images, videos, video_audios, audios):
 
 
 def _fingerprint(items):
-    """Dau van tay cua bo ref phu, de bao cho user biet no da doi."""
+    """Fingerprint of the extra reference set, so the user notices it changed."""
     h = hashlib.sha256()
     for it in items:
         if it is None:
@@ -145,7 +145,7 @@ class MVRendererMultiRef:
             "video_vae": ("VAE",),
             "audio_vae": ("VAE",),
             "reference_image": ("IMAGE", {
-                "tooltip": "Anh nhan dang chinh. Day la <Picture 1> trong prompt."}),
+                "tooltip": "Main identity image. This is <Picture 1> in the prompt."}),
             "full_song": ("AUDIO",),
             "vocal_lock_audio": ("AUDIO",),
             "mv_vocal_lock_prompt_plan": ("H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",),
@@ -154,7 +154,7 @@ class MVRendererMultiRef:
             "height": ("INT", {"default": 768, "min": 32, "max": 16384, "step": 32}),
             "base_seed": ("INT", {"default": 123456789, "min": 0, "max": 0xFFFFFFFFFFFFFFFF}),
             "steps": ("INT", {"default": 4, "min": 1, "max": 1000,
-                              "tooltip": "Ref2V Turbo v0.1 dung 4 NFE."}),
+                              "tooltip": "The official Ref2V Turbo v0.1 LoRA uses 4 NFE."}),
             "shift_video": ("FLOAT", {"default": 12.0, "min": 0.01, "max": 100.0, "step": 0.01}),
             "shift_audio": ("FLOAT", {"default": 3.0, "min": 0.01, "max": 100.0, "step": 0.01}),
             "sampler_name": ((samplers, {"default": "dual_clock_euler"}) if samplers
@@ -171,17 +171,17 @@ class MVRendererMultiRef:
         opt = {}
         for i in range(2, MAX_IMAGES + 1):
             opt["ref_image_%d" % i] = ("IMAGE", {
-                "tooltip": "Anh tham chieu thu %d. Goi trong prompt bang <Picture %d>. "
-                           "Dung cho trang phuc, boi canh, do vat." % (i, i)})
+                "tooltip": "Reference image %d. Name it in the prompt as <Picture %d>. "
+                           "Use it for an outfit, a location, an object." % (i, i)})
         for i in range(1, MAX_VIDEOS + 1):
             opt["ref_video_%d" % i] = ("IMAGE", {
-                "tooltip": "Video tham chieu %d (chuoi IMAGE, toi thieu 5 frame). "
-                           "Goi bang <Video %d>." % (i, i)})
+                "tooltip": "Reference video %d (IMAGE sequence, at least 5 frames). "
+                           "Name it as <Video %d>. Truncated to the scene length." % (i, i)})
             opt["ref_video_audio_%d" % i] = ("AUDIO", {
-                "tooltip": "Tieng di kem ref_video_%d." % i})
+                "tooltip": "Soundtrack that belongs to ref_video_%d." % i})
         for i in range(1, MAX_AUDIOS + 1):
             opt["ref_audio_%d" % i] = ("AUDIO", {
-                "tooltip": "Audio tham chieu %d. Goi bang <Audio %d>." % (i, i)})
+                "tooltip": "Reference audio %d. Name it as <Audio %d>." % (i, i)})
         return {"required": req, "optional": opt}
 
     RETURN_TYPES = ("STRING", "STRING", "INT", "STRING", "STRING")
@@ -189,8 +189,9 @@ class MVRendererMultiRef:
     FUNCTION = "run"
     CATEGORY = "MiniMaxH3/MV"
     OUTPUT_NODE = True
-    DESCRIPTION = ("Renderer chuoi MV nhung nhan toi 9 anh, 3 video, 3 audio tham chieu. "
-                   "Prompt goi tung cai bang <Picture N> / <Video N> / <Audio N>.")
+    DESCRIPTION = ("MV chain renderer that accepts up to 9 images, 3 videos and 3 audios "
+                   "as references. Name each one in the prompt with <Picture N> / "
+                   "<Video N> / <Audio N>.")
 
     def run(self, **kw):
         images, videos, audios, vauds = [], [], [], {}
@@ -207,8 +208,8 @@ class MVRendererMultiRef:
                     vauds["ref_video_audio_%d" % len(videos)] = a
             elif a is not None:
                 raise ValueError(
-                    "MV Renderer Multi-Ref: da noi ref_video_audio_%d nhung "
-                    "ref_video_%d con trong. Tieng phai di kem video." % (i, i))
+                    "MV Renderer Multi-Ref: ref_video_audio_%d is connected but "
+                    "ref_video_%d is empty. A soundtrack must accompany its video." % (i, i))
         for i in range(1, MAX_AUDIOS + 1):
             v = kw.pop("ref_audio_%d" % i, None)
             if v is not None:
@@ -216,7 +217,7 @@ class MVRendererMultiRef:
 
         total_img = 1 + len(images)
         if total_img > MAX_IMAGES:
-            raise ValueError("Toi da %d anh ke ca reference_image, dang co %d"
+            raise ValueError("At most %d images including reference_image, got %d"
                              % (MAX_IMAGES, total_img))
 
         mod = _t8_module()
@@ -226,9 +227,10 @@ class MVRendererMultiRef:
             video_path, manifest_path, completed, status, report = (
                 mod.run_local_mv_vocal_lock_visual_in_node_loop(**kw))
 
-        note = ("ref: %d anh (<Picture 1..%d>), %d video, %d audio | dau van tay bo ref phu: %s"
+        note = ("refs: %d images (<Picture 1..%d>), %d videos, %d audios | extra-ref fingerprint: %s"
                 % (total_img, total_img, len(videos), len(audios), fp))
         if images or videos or audios:
-            note += ("\nLUU Y: bo ref phu KHONG nam trong hop dong resume. Doi ref ma giu "
-                     "nguyen chain_id thi cac canh cu van duoc dung lai - phai doi chain_id.")
+            note += ("\nNOTE: the extra references are NOT part of the resume contract. "
+                     "Changing them while keeping the same chain_id silently reuses the old "
+                     "scenes - change chain_id whenever this fingerprint changes.")
         return (video_path, manifest_path, completed, status, report + "\n" + note)

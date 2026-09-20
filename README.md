@@ -11,7 +11,7 @@ music videos with **MiniMax H3** locally:
    though the underlying builder supports nine images, three videos and three
    audios. `MV Renderer Multi-Ref` unlocks the rest.
 
-Requires the [`comfyui-minimax-h3-audio-T8`](https://github.com/T8star1984/Comfyui-Minimax-H3-Audio)
+Requires the [`comfyui-minimax-h3-audio-T8`](https://github.com/T8mars/comfyui-minimax-h3-audio-T8)
 node pack — this repo extends it, it does not replace it.
 
 ---
@@ -162,7 +162,7 @@ guessing.
 
 ## Credits
 
-Built on top of [`comfyui-minimax-h3-audio-T8`](https://github.com/T8star1984/Comfyui-Minimax-H3-Audio)
+Built on top of [`comfyui-minimax-h3-audio-T8`](https://github.com/T8mars/comfyui-minimax-h3-audio-T8)
 by T8mars, which wraps MiniMax's H3 model. Those two do the actual work; this
 repo only directs the camera and widens the reference slots.
 

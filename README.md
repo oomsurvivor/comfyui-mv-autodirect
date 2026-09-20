@@ -87,11 +87,26 @@ What happens next:
    500-character limit, the 21 banned words and the 6 rewritten phrases.
 4. **Shows the scene plan** — every scene with its angle, length, and whether it
    sings or poses. Still nothing rendered.
-5. **Renders only after you agree**, or hands you the four blocks to paste into
-   the node yourself.
+5. **Hands you four blocks to paste** into `MV Auto Director`, in the order the
+   fields appear on the node:
+
+   | | Paste into | |
+   |---|---|---|
+   | 1 | `custom_global_prompt` | the setting — **required** |
+   | 2 | `custom_angles_json` | the angle library, one long JSON line |
+   | 3 | `custom_light` | the light source |
+   | 4 | `custom_pose` | posing actions for non-singing scenes |
+
+   It also proposes a `pose_scenes` or `pose_every` value and says what that is
+   based on. Then set a fresh `chain_id` on the renderer and press Run.
+
+   Or say the word and it drives ComfyUI for you instead.
 
 Steps 2 and 4 are hard stops. A full song takes about 100 minutes to render, so
 the skill makes you look at a free 1.1-second preview first.
+
+The angle block runs to tens of thousands of characters, so the skill puts it on
+your clipboard rather than printing it — click the field and press Ctrl+V.
 
 ---
 

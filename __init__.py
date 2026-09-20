@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-"""MV Auto Director — sinh scene_directions_json cho MiniMax H3 MV VocalLock V3.
+"""MV Auto Director - writes scene_directions_json for MiniMax H3 MV VocalLock V3.
 
-Cam thang giua ScenePlanner va VisualDirector. Tu chon goc quay cho tung canh
-theo nang luong nhac, voi 4 luat chong nham chan:
-  1. khong lap dung muc do trong 6 canh
-  2. khong lap cung kieu chuyen dong may (move) trong 4 canh
-  3. khong hai canh lien tiep cung nhip (tinh / cham / dong)
-  4. han ngach co canh + nhip -> CU/MCU/MS/WS chia deu
+Sits between ScenePlanner and VisualDirector. Picks a camera angle for every
+scene, with four anti-monotony rules:
+  1. never reuse the same entry within 6 scenes
+  2. never reuse the same camera move within 4 scenes
+  3. never two consecutive scenes with the same motion class
+  4. a weighted quota spreads CU/MCU/MS/WS across the video
 
-Thu vien 51 goc dua tren "Higgsfield camera move library" (65 move) va
-"Angle of view language bank" cua skill seedance-cinedance, da loc bo cac move
-pha lip-sync va da tranh 21 tu bi H3 Director cam.
+The 51-angle library is derived from the "Higgsfield camera move library"
+(65 moves) and its "Angle of view language bank", with the moves that break
+lip-sync removed and the 21 words the H3 director rejects avoided throughout.
 """
 import hashlib
 import json
@@ -18,23 +18,24 @@ import re
 
 from .data import LIB, PRESETS
 
-# Ti le co canh mong muon. Can canh co han ngach THAP nhat vi node H3 von
-# thien lech san ve phia do ("tongue visibility ... facial muscles").
+# Target shot-size distribution. Close-ups get the LOWEST quota because the H3
+# node is already biased towards them ("tongue visibility ... facial muscles").
 SIZE_TARGET = {"CU": 0.12, "MCU": 0.24, "MS": 0.31, "WS": 0.33}
 
-# Move DAT khi nen phuc tap: phoi sang dai / xoay quanh / may gan than deu phai
-# tinh chuyen dong cho MOI vat the trong khung. Ghep voi khung rong + dam dong
-# thi thoi gian render tang gan 10 lan (do duoc: 16,7 phut so voi 1,7 phut).
+# Moves that get expensive over a busy background: long exposure, orbiting and
+# body-mounted rigs all have to solve motion for EVERY object in frame. Paired
+# with a wide shot and a crowd, render time rose ~10x (measured: 16.7 vs 1.7 min).
 COSTLY_MOVES = {"LOW SHUTTER", "3D ROTATION", "SNORRICAM", "ARC LEFT", "ARC RIGHT"}
 
-# Preset co dam dong -> nen phuc tap.
+# Presets that contain a crowd -> busy background.
 BUSY_PRESETS = {"court_crowd", "street_crowd"}
 
-# Sau cum bi _safe_vocal_camera_direction cua pack T8 VIET LAI ngam:
+# Six phrases that T8's _safe_vocal_camera_direction REWRITES without telling you:
 #   wide shot / full body shot / long shot -> "stable performance framing"
 #   from behind -> "from a front three-quarter angle"
 #   profile -> "three-quarter face view"
-# => canh rong phai viet "Full body in frame" + "84 degree diagonal field of view".
+# => for a real wide shot write "Full body in frame" + "84 degree diagonal field
+#    of view" plus an explicit geometric constraint.
 REWRITTEN = re.compile(
     r"\b(?:(?:extreme )?wide shot|(?:full-body|full body|long) shot|"
     r"over-the-shoulder shot|from behind|profile(?: shot)?|eye-only shot)\b",
@@ -46,9 +47,9 @@ UNSAFE = re.compile(
     r"phone|tablet|painting|photo|photograph)\b", re.IGNORECASE)
 
 
-# Cach pack T8 bam ke hoach canh (doc tu h3_t8/mv_lipsync_advanced.py):
+# How T8 signs the scene plan (read from h3_t8/mv_lipsync_advanced.py):
 #   _canonical_json = json.dumps(sort_keys=True, separators=(",",":"), ensure_ascii=False)
-#   _hash = sha256(_canonical_json(plan_khong_co_plan_hash)).hexdigest()
+#   _hash = sha256(_canonical_json(plan_without_plan_hash)).hexdigest()
 def _canonical_json(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
@@ -60,7 +61,7 @@ def _plan_hash(plan):
 
 
 def _parse_indices(text, n):
-    """'3,7,12' hoac '3-5,9' -> {3,4,5,7,9,12}. Bo qua chi so ngoai pham vi."""
+    """'3,7,12' or '3-5,9' -> {3,4,5,7,9,12}. Out-of-range indices are dropped."""
     out = set()
     for part in str(text or "").replace(" ", "").split(","):
         if not part:
@@ -81,11 +82,11 @@ def _parse_indices(text, n):
 
 
 def _apply_pose_override(scene_plan, pose_scenes, pose_every):
-    """Ep mot so canh thanh non_vocal ('lam mau') roi ky lai ke hoach.
+    """Force some scenes to non_vocal ("posing"), then re-sign the plan.
 
-    pose_scenes: '3,7,12' hoac '3-5,9'. Uu tien hon pose_every.
-    pose_every : N > 0 -> cu N canh thi 1 canh lam mau (canh N-1, 2N-1, ...).
-    Tra ve (ke_hoach_moi, danh_sach_chi_so_da_ep).
+    pose_scenes: '3,7,12' or '3-5,9'. Takes precedence over pose_every.
+    pose_every : N > 0 -> every Nth scene poses (scenes N-1, 2N-1, ...).
+    Returns (new_plan, list_of_forced_indices).
     """
     scenes = scene_plan["scenes"]
     n = len(scenes)
@@ -98,7 +99,7 @@ def _apply_pose_override(scene_plan, pose_scenes, pose_every):
     if not forced:
         return scene_plan, []
 
-    plan = json.loads(json.dumps(scene_plan))          # ban sao sach
+    plan = json.loads(json.dumps(scene_plan))          # deep copy
     for i in sorted(forced):
         plan["scenes"][i]["performance_state"] = "non_vocal"
     plan["plan_hash"] = _plan_hash(plan)
@@ -106,15 +107,16 @@ def _apply_pose_override(scene_plan, pose_scenes, pose_every):
 
 
 def _load_custom_pose(text):
-    """Doc thu vien tu the LAM MAU rieng cho MV nay tu chuoi JSON dan vao node.
+    """Read this MV's own posing library from the JSON pasted into the node.
 
-    Dang: [{"perf": "...", "emo": "..."}, ...]
-    Dat {"replace": true} o phan tu dau de THAY han 26 tu the mac dinh,
-    khong thi tu the moi duoc GOP them vao.
-    Tra ve (danh_sach_cap, co_thay_han).
+    Shape: [{"perf": "...", "emo": "..."}, ...]
+    Put {"replace": true} first to REPLACE the 26 built-in poses; otherwise the
+    new ones are appended.
+    Returns (list_of_pairs, replaced).
 
-    Dung o day de nhan vat lam viec hop boi canh trong canh KHONG hat -
-    nem bong vao ro, mo cua xe, dot thuoc - thay vi 26 tu the trung tinh.
+    Use it to let the character do something that fits the setting during
+    non-singing scenes - shoot a hoop, open a car door - instead of the
+    26 deliberately neutral built-ins.
     """
     text = (text or "").strip()
     if not text:
@@ -122,9 +124,9 @@ def _load_custom_pose(text):
     try:
         data = json.loads(text)
     except Exception as e:
-        raise ValueError("custom_pose khong phai JSON hop le: %s" % e)
+        raise ValueError("custom_pose is not valid JSON: %s" % e)
     if not isinstance(data, list):
-        raise ValueError("custom_pose phai la mot mang []")
+        raise ValueError("custom_pose must be a JSON array []")
 
     replace = bool(data and isinstance(data[0], dict) and data[0].get("replace"))
     items = [e for e in data if isinstance(e, dict) and not e.get("replace")]
@@ -132,31 +134,31 @@ def _load_custom_pose(text):
     for i, e in enumerate(items):
         miss = [k for k in ("perf", "emo") if k not in e]
         if miss:
-            raise ValueError("tu the %d thieu truong %s" % (i, miss))
+            raise ValueError("pose %d is missing field(s) %s" % (i, miss))
         pair = []
         for k in ("perf", "emo"):
             v = str(e[k])
             if len(v) > 500:
-                raise ValueError("tu the %d: %s dai %d ky tu, toi da 500" % (i, k, len(v)))
+                raise ValueError("pose %d: %s is %d characters, the limit is 500" % (i, k, len(v)))
             hit = UNSAFE.findall(v)
             if hit:
-                raise ValueError("tu the %d: %s co tu cam %s"
+                raise ValueError("pose %d: %s contains banned word(s) %s"
                                  % (i, k, sorted(set(x.lower() for x in hit))))
             pair.append(v)
         out.append(tuple(pair))
     if replace and not out:
-        raise ValueError("custom_pose dat replace=true nhung khong co tu the nao")
+        raise ValueError("custom_pose sets replace=true but contains no poses")
     return out, replace
 
 
 def _load_custom_angles(text):
-    """Doc thu vien goc rieng tu chuoi JSON dan vao node.
+    """Read a custom angle library from the JSON pasted into the node.
 
-    Dang: [{"move":..,"size":"CU|MCU|MS|WS","energy":"lo|mid|hi",
-            "motion":"static|slow|dyn","cam":..,"perf":..,"emo":..}, ...]
-    Dat {"replace": true} o phan tu dau de THAY han 51 goc mac dinh,
-    khong thi goc moi duoc GOP them vao.
-    Tra ve (danh_sach_goc, co_thay_han).
+    Shape: [{"move":..,"size":"CU|MCU|MS|WS","energy":"lo|mid|hi",
+             "motion":"static|slow|dyn","cam":..,"perf":..,"emo":..}, ...]
+    Put {"replace": true} first to REPLACE the 51 built-in angles; otherwise
+    the new ones are appended.
+    Returns (list_of_angles, replaced).
     """
     text = (text or "").strip()
     if not text:
@@ -164,9 +166,9 @@ def _load_custom_angles(text):
     try:
         data = json.loads(text)
     except Exception as e:
-        raise ValueError("custom_angles_json khong phai JSON hop le: %s" % e)
+        raise ValueError("custom_angles_json is not valid JSON: %s" % e)
     if not isinstance(data, list):
-        raise ValueError("custom_angles_json phai la mot mang []")
+        raise ValueError("custom_angles_json must be a JSON array []")
 
     replace = bool(data and isinstance(data[0], dict) and data[0].get("replace"))
     items = [e for e in data if isinstance(e, dict) and not e.get("replace")]
@@ -174,40 +176,40 @@ def _load_custom_angles(text):
     for i, e in enumerate(items):
         miss = [k for k in need if k not in e]
         if miss:
-            raise ValueError("goc %d thieu truong %s" % (i, miss))
+            raise ValueError("angle %d is missing field(s) %s" % (i, miss))
         if e["size"] not in SIZE_TARGET:
-            raise ValueError("goc %d: size phai la CU/MCU/MS/WS" % i)
+            raise ValueError("angle %d: size must be CU/MCU/MS/WS" % i)
         if e["motion"] not in ("static", "slow", "dyn"):
-            raise ValueError("goc %d: motion phai la static/slow/dyn" % i)
+            raise ValueError("angle %d: motion must be static/slow/dyn" % i)
         if e["energy"] not in ("lo", "mid", "hi"):
-            raise ValueError("goc %d: energy phai la lo/mid/hi" % i)
+            raise ValueError("angle %d: energy must be lo/mid/hi" % i)
         for k in ("cam", "perf", "emo"):
             v = str(e[k])
             if len(v) > 500:
-                raise ValueError("goc %d: %s dai %d ky tu, toi da 500" % (i, k, len(v)))
+                raise ValueError("angle %d: %s is %d characters, the limit is 500" % (i, k, len(v)))
             hit = UNSAFE.findall(v)
             if hit:
-                raise ValueError("goc %d: %s co tu bi H3 cam %s"
+                raise ValueError("angle %d: %s contains word(s) H3 rejects %s"
                                  % (i, k, sorted(set(x.lower() for x in hit))))
             bad = REWRITTEN.findall(v)
             if bad:
-                raise ValueError("goc %d: %s co cum bi node H3 viet lai ngam %s - "
-                                 "canh rong phai viet 'Full body in frame' + "
+                raise ValueError("angle %d: %s contains phrase(s) H3 silently rewrites %s - "
+                                 "for a real wide shot write 'Full body in frame' + "
                                  "'84 degree diagonal field of view'"
                                  % (i, k, sorted(set(x.lower() for x in bad))))
     if not items:
-        raise ValueError("custom_angles_json khong co goc nao")
+        raise ValueError("custom_angles_json contains no angles")
     return items, replace
 
 
-# Tu chi dam dong trong mo ta boi canh. Thay -> nen phuc tap -> tranh ghep
-# cac move dat voi khung rong (do duoc: ghep sai lam 1 canh mat 16,7 phut).
+# Crowd words in the scene description. Found -> busy background -> avoid
+# pairing expensive moves with a wide shot (measured: 16.7 min for one scene).
 CROWD_WORDS = re.compile(
     r"\b(?:people|persons|players|crowd|crowds|passers-?by|bystanders?|onlookers?|"
     r"audience|spectators?|pedestrians?|dancers?|fans|teammates?|friends|"
     r"everyone|others|group of|a few (?:men|women|kids|guys))\b", re.IGNORECASE)
 
-# Cum phu dinh: co the chua tu tren nhung y la KHONG co ai.
+# Negations: may contain a crowd word but actually mean nobody is there.
 SOLO_WORDS = re.compile(
     r"(?:nobody else (?:is )?(?:present|around|visible|in sight|in frame)|"
     r"no one else (?:is )?(?:present|around|visible|in sight)|nobody around|"
@@ -215,17 +217,17 @@ SOLO_WORDS = re.compile(
 
 
 def _detect_busy(text):
-    """Doan xem boi canh co dam dong khong. Tra ve (ket_qua, ly_do)."""
+    """Guess whether the setting has a crowd. Returns (result, reason)."""
     t = str(text or "")
     solo = SOLO_WORDS.findall(t)
     crowd = CROWD_WORDS.findall(t)
     if crowd and not solo:
-        return True, "thay %s" % sorted(set(x.lower() for x in crowd))[:3]
+        return True, "found %s" % sorted(set(x.lower() for x in crowd))[:3]
     if crowd and solo:
-        return False, "co %s nhung cung co %s" % (
+        return False, "found %s but also %s" % (
             sorted(set(x.lower() for x in crowd))[:2],
             sorted(set(x.lower() for x in solo))[:2])
-    return False, "khong thay tu chi dam dong"
+    return False, "no crowd words found"
 
 
 def _tier(score, lo, hi):
@@ -261,7 +263,7 @@ def _choose(scenes, seed=0, busy_bg=False, lib=None):
             pool = [e for e in pool if e["motion"] != motions[-1]] or pool
         if sizes:
             pool = [e for e in pool if e["size"] != sizes[-1]] or pool
-        # move DAT khong duoc ghep voi khung rong khi nen phuc tap
+        # expensive moves must not meet a wide shot over a busy background
         if busy_bg:
             pool = [e for e in pool
                     if not (e["move"] in COSTLY_MOVES and e["size"] in ("WS", "MS"))] or pool
@@ -283,12 +285,13 @@ def _choose(scenes, seed=0, busy_bg=False, lib=None):
     return out
 
 
-# Dien xuat cho canh LAM MAU. Co y BO khoa anh mat - anh ta duoc nhin di cho khac.
-# Co tinh viet TRUNG TINH, khong gan voi boi canh nao, de dung lai cho moi MV.
-# Muon tu the rieng theo boi canh (nem bong, cam vo lang, mo cua...) thi dan
-# vao o custom_pose - xem _load_custom_pose().
+# Performance text for POSING scenes. The gaze lock is deliberately DROPPED so
+# the character is free to look away. Written to be NEUTRAL, tied to no setting,
+# so it is reusable across any MV. For setting-specific actions (shoot a hoop,
+# hold a steering wheel, open a door) paste into custom_pose - see
+# _load_custom_pose().
 POSE = [
-    # --- tinh / noi tam ---
+    # --- still / inward ---
     ("stands still and lets his gaze travel slowly across the space in front of him, from one side "
      "to the other, never settling on the lens, chest rising once with a long breath, mouth closed "
      "and still", "searching, unsettled"),
@@ -300,7 +303,7 @@ POSE = [
      "to his right, mouth closed and still", "watchful, quiet"),
     ("lowers his head until his chin nearly touches his chest, holds it, then lifts it slowly with "
      "his eyes fixed somewhere off past the lens, mouth closed and still", "heavy, gathering"),
-    # --- di chuyen ---
+    # --- movement ---
     ("takes a few slow steps toward one side of the frame, weight rolling heel to toe, head turned "
      "away from the camera, mouth closed and still", "loose, in his own world"),
     ("turns a slow half circle on the spot, arms hanging, letting his eyes sweep the space around "
@@ -311,7 +314,7 @@ POSE = [
      "of him, mouth closed and still", "caged, restless"),
     ("steps backward slowly with his weight low, eyes off to one side, mouth closed and still",
      "wary, giving ground"),
-    # --- cham vao khong gian ---
+    # --- touching the space ---
     ("leans his shoulders back against a wall, arms folded, one knee bent, looking off to the side "
      "past the lens, mouth closed and still", "cool, unbothered"),
     ("rests both forearms on a railing in front of him and leans his weight into it, head down, "
@@ -320,7 +323,7 @@ POSE = [
      "closed and still", "grounded, collecting himself"),
     ("reaches up and grips something overhead with one hand, hanging his weight from it, chest "
      "open, looking off to the side, mouth closed and still", "stretched out, defiant"),
-    # --- nang luong cao ---
+    # --- high energy ---
     ("rolls his shoulders loose then throws two sharp shadow punches into the empty air beside the "
      "lens and resets his stance, mouth closed and still", "charged, itching to move"),
     ("drops his head and snaps it up on the beat, shoulders driving hard, feet planted wide, eyes "
@@ -331,7 +334,7 @@ POSE = [
      "eyes down and away, mouth closed and still", "in the pocket, easy"),
     ("throws both arms wide and holds them there, head tipped back, chest open to the space above "
      "him, mouth closed and still", "triumphant, wide open"),
-    # --- cu chi tay va mat ---
+    # --- hands and face ---
     ("drags a slow hand back over his hair and lets it fall, gaze dropping then lifting away to one "
      "side, mouth closed and still", "restless, brooding"),
     ("rolls his shoulders back and tugs his collar straight, eyes down on his own hands then away "
@@ -340,7 +343,7 @@ POSE = [
      "and still", "coiled, holding something in"),
     ("pulls the neck of his jacket up and turns his face a quarter away from the lens, eyes down, "
      "mouth closed and still", "closed off, guarded"),
-    # --- thap / ngoi / do nguoi ---
+    # --- low / seated / slumped ---
     ("sits down low with his forearms across his knees and his head hanging, then lifts his chin "
      "and looks off to one side, mouth closed and still", "worn down, honest"),
     ("sinks to a crouch, elbows on knees, hands clasped, staring at a point on the ground in front "
@@ -357,44 +360,50 @@ class MVAutoDirector:
             "required": {
                 "scene_plan": ("H3_T8_MV_SCENE_PLAN",),
                 "preset": (["custom"] + list(PRESETS), {"default": "custom",
-                    "tooltip": "custom = dung ba o dan ben duoi. Con lai la 7 boi canh lam san."}),
+                    "tooltip": "custom = read the paste-in fields below. The rest are 7 ready-made settings."}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xFFFFFFFF}),
             },
             "optional": {
                 "custom_global_prompt": ("STRING", {
                     "multiline": True, "default": "",
-                    "tooltip": "De trong = dung preset. Dien vao de tu ta boi canh. "
-                               "DAM DONG ta o day, khong bao gio ta trong scene_directions."}),
+                    "tooltip": "Required when preset = custom. Who, where, and what surrounds "
+                               "them. Describe crowds HERE and never in the angle library - "
+                               "this field is not word-filtered, scene directions are."}),
                 "pose_scenes": ("STRING", {
                     "default": "",
-                    "tooltip": "Ep canh nao thanh 'lam mau' (khong hat), vd '3,7,12' hoac '3-5,9'. "
-                               "Dung duoc CA voi canh dang co vocal - node se ky lai ke hoach."}),
+                    "tooltip": "Force these scenes to stop lip-syncing, e.g. '3,7,12' or '3-5,9'. "
+                               "Works even on scenes full of vocal - the node re-signs the "
+                               "hash-protected scene plan for you."}),
                 "pose_every": ("INT", {
                     "default": 0, "min": 0, "max": 20,
-                    "tooltip": "0 = tat. N > 0 = cu N canh thi 1 canh lam mau. "
-                               "Bi bo qua neu da dien pose_scenes."}),
+                    "tooltip": "0 = off. N > 0 = every Nth scene becomes a posing scene. "
+                               "Ignored when pose_scenes is filled in."}),
                 "busy_background": (["auto", "on", "off"], {
                     "default": "auto",
-                    "tooltip": "auto = node tu doc mo ta boi canh, thay tu chi dam dong thi bat. "
-                               "Bat thi no tranh ghep move dat (LOW SHUTTER, 3D ROTATION, SNORRICAM, "
-                               "ARC) voi khung rong - do duoc: ghep sai lam 1 canh mat 16,7 phut "
-                               "thay vi 1,7. Chi dat on/off khi muon ep tay."}),
+                    "tooltip": "auto = the node reads your scene description and decides. "
+                               "When on, it avoids pairing expensive moves (LOW SHUTTER, "
+                               "3D ROTATION, SNORRICAM, ARC) with a wide shot - measured: the "
+                               "wrong pairing cost 16.7 minutes for one scene instead of 1.7. "
+                               "Only set on/off to override."}),
                 "custom_angles_json": ("STRING", {
                     "multiline": True, "default": "",
-                    "tooltip": "Thu vien goc rieng cho MV nay, dang JSON. De trong = dung 51 goc "
-                               "mac dinh. Dat {\"replace\": true} o dau mang de THAY han. "
-                               "Node tu kiem 500 ky tu, 21 tu cam va 6 cum bi H3 viet lai."}),
+                    "tooltip": "Your own camera-angle library as JSON. Empty = the 51 built-in "
+                               "angles. Put {\"replace\": true} first in the array to replace "
+                               "them instead of appending. The node checks the 500-character "
+                               "limit, 21 banned words and 6 silently rewritten phrases."}),
                 "custom_light": ("STRING", {
                     "multiline": True, "default": "",
-                    "tooltip": "De trong = dung anh sang cua preset. Phai khoa nguon sang "
-                               "CO DINH trong the gioi, chi may di chuyen."}),
+                    "tooltip": "Empty = the preset's lighting. Lock the light source to a FIXED "
+                               "position in the world so only the camera moves - otherwise the "
+                               "light jumps at every cut."}),
                 "custom_pose": ("STRING", {
                     "multiline": True, "default": "",
-                    "tooltip": "Tu the cho canh LAM MAU (canh khong hat), dang JSON: "
-                               "[{\"perf\":..,\"emo\":..}, ...]. De trong = dung 26 tu the "
-                               "trung tinh mac dinh. Dat {\"replace\": true} o dau mang de "
-                               "THAY han. Dung de nhan vat lam viec hop boi canh - nem bong "
-                               "vao ro, mo cua xe - thay vi tua tuong nhin xa xam."}),
+                    "tooltip": "Posing actions for non-singing scenes, as JSON: "
+                               "[{\"perf\":..,\"emo\":..}, ...]. Empty = the 26 built-in neutral "
+                               "poses. Put {\"replace\": true} first to replace them. Use this "
+                               "to let the character do something that fits the setting - shoot "
+                               "a hoop, open a car door - instead of leaning on a wall. Each "
+                               "perf must contain 'mouth closed and still'."}),
             },
         }
 
@@ -403,8 +412,8 @@ class MVAutoDirector:
                     "visual_style", "report")
     FUNCTION = "run"
     CATEGORY = "MiniMaxH3/MV"
-    DESCRIPTION = ("Tu chon goc quay cho tung canh tu thu vien 51 cu may. "
-                   "Cam giua ScenePlanner va VisualDirector.")
+    DESCRIPTION = ("Picks a camera angle for every scene from a 51-entry library. "
+                   "Sits between ScenePlanner and VisualDirector.")
 
     def run(self, scene_plan, preset, seed, pose_scenes="", pose_every=0,
             custom_global_prompt="", custom_light="", custom_angles_json="",
@@ -414,8 +423,8 @@ class MVAutoDirector:
         if preset == "custom":
             if not gl:
                 raise ValueError(
-                    "MV Auto Director: preset dang la 'custom' nhung o custom_global_prompt "
-                    "con trong. Dan mo ta boi canh vao do, hoac chon mot preset co san.")
+                    "MV Auto Director: preset is 'custom' but custom_global_prompt is empty. "
+                    "Paste a scene description there, or pick one of the built-in presets.")
             if not li:
                 li = ("soft even daylight fixed in the same world position for every shot, "
                       "gentle rim along his hair and shoulder, no flat frontal key")
@@ -433,9 +442,9 @@ class MVAutoDirector:
         xpose, xreplace = _load_custom_pose(custom_pose)
         poses = xpose if (xpose and xreplace) else (POSE + xpose if xpose else POSE)
         if busy_background == "on":
-            busy, why = True, "ep tay"
+            busy, why = True, "forced on"
         elif busy_background == "off":
-            busy, why = False, "ep tay"
+            busy, why = False, "forced off"
         scene_plan, forced = _apply_pose_override(scene_plan, pose_scenes, pose_every)
         scenes = scene_plan["scenes"]
         picks = _choose(scenes, seed, busy_bg=busy, lib=lib)
@@ -450,10 +459,10 @@ class MVAutoDirector:
                  "performance": perf, "emotion": emo}
             for k, v in d.items():
                 if len(v) > 500:
-                    problems.append("canh %d: %s dai %d ky tu" % (i, k, len(v)))
+                    problems.append("scene %d: %s is %d characters" % (i, k, len(v)))
                 hit = UNSAFE.findall(v)
                 if hit:
-                    problems.append("canh %d: %s co tu cam %s"
+                    problems.append("scene %d: %s contains banned word(s) %s"
                                     % (i, k, sorted(set(x.lower() for x in hit))))
             dirs.append(d)
         if problems:
@@ -465,18 +474,18 @@ class MVAutoDirector:
             mots[e["motion"]] = mots.get(e["motion"], 0) + 1
             moves[e["move"]] = moves.get(e["move"], 0) + 1
         npv = sum(1 for sc in scenes if sc.get("performance_state") == "non_vocal")
-        src = ("goc rieng, thay han" if (extra and replace)
-               else ("51 mac dinh + %d goc rieng" % len(extra)) if extra
-               else "51 goc mac dinh")
-        boi = "custom (prompt dan vao)" if preset == "custom" else ("preset " + preset)
-        lines = ["%d canh | %d/%d muc | thu vien: %s" 
+        src = ("custom library, replaced" if (extra and replace)
+               else ("51 built-in + %d custom" % len(extra)) if extra
+               else "51 built-in angles")
+        boi = "custom (pasted prompt)" if preset == "custom" else ("preset " + preset)
+        lines = ["%d scenes | %d/%d entries used | library: %s"
                  % (len(picks), len({id(e) for e in picks}), len(lib), src),
-                 "boi canh: %s | nen phuc tap: %s (%s)" % (boi, "CO" if busy else "khong", why),
-                 "co canh: " + json.dumps(sizes), "nhip: " + json.dumps(mots),
-                 "hat: %d | lam mau: %d%s" % (len(scenes) - npv, npv,
-                     ("  (ep tay: " + ",".join(map(str, forced)) + ")") if forced else ""), ""]
+                 "setting: %s | busy background: %s (%s)" % (boi, "YES" if busy else "no", why),
+                 "shot sizes: " + json.dumps(sizes), "motion: " + json.dumps(mots),
+                 "singing: %d | posing: %d%s" % (len(scenes) - npv, npv,
+                     ("  (forced: " + ",".join(map(str, forced)) + ")") if forced else ""), ""]
         for i, (e, sc) in enumerate(zip(picks, scenes)):
-            tag = "LAM MAU" if sc.get("performance_state") == "non_vocal" else "hat"
+            tag = "POSING" if sc.get("performance_state") == "non_vocal" else "sing"
             lines.append("%3d  %6.2fs  %-18s %-4s %-6s %-8s %s"
                          % (i, sc.get("duration_seconds", 0), e["move"], e["size"],
                             e["motion"], tag, dirs[i]["emotion"]))
@@ -492,7 +501,7 @@ NODE_CLASS_MAPPINGS = {
     "MVRendererMultiRef": MVRendererMultiRef,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "MVAutoDirector": "MV Auto Director (51 goc)",
-    "MVRendererMultiRef": "MV Renderer Multi-Ref (9 anh / 3 video / 3 audio)",
+    "MVAutoDirector": "MV Auto Director (51 camera angles)",
+    "MVRendererMultiRef": "MV Renderer Multi-Ref (9 images / 3 videos / 3 audios)",
 }
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]

@@ -1,0 +1,1322 @@
+{
+  "id": "796b561b-8b75-4dc4-9ca0-da4d531865ae",
+  "revision": 0,
+  "last_node_id": 9005,
+  "last_link_id": 23,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "UNETLoader",
+      "pos": [
+        0,
+        0
+      ],
+      "size": [
+        360,
+        82
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors",
+        "default"
+      ],
+      "title": "1. Load local MiniMax H3 Ref2VA model"
+    },
+    {
+      "id": 2,
+      "type": "LoraLoaderBypassModelOnly",
+      "pos": [
+        400,
+        0
+      ],
+      "size": [
+        430,
+        105
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderBypassModelOnly"
+      },
+      "widgets_values": [
+        "minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors",
+        1.0
+      ],
+      "title": "2. Official Ref2V Turbo v0.1 · 4 NFE · strength 1.0"
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        0,
+        150
+      ],
+      "size": [
+        360,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+        "minimax",
+        "default"
+      ],
+      "title": "3. Local H3 Qwen3-VL CLIP · cached by exact reference prefix"
+    },
+    {
+      "id": 4,
+      "type": "VAELoader",
+      "pos": [
+        0,
+        310
+      ],
+      "size": [
+        360,
+        58
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "minimax_h3_video_vae_fp16.safetensors"
+      ],
+      "title": "4. H3 video VAE"
+    },
+    {
+      "id": 5,
+      "type": "VAELoader",
+      "pos": [
+        0,
+        420
+      ],
+      "size": [
+        360,
+        58
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "minimax_h3_audio_vae_fp32.safetensors"
+      ],
+      "title": "5. H3 audio VAE"
+    },
+    {
+      "id": 6,
+      "type": "LoadImage",
+      "pos": [
+        0,
+        560
+      ],
+      "size": [
+        360,
+        310
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "chon anh nhan vat, MOT mat",
+        "image"
+      ],
+      "title": "6. Replace with performer reference image"
+    },
+    {
+      "id": 7,
+      "type": "LoadAudio",
+      "pos": [
+        0,
+        930
+      ],
+      "size": [
+        360,
+        120
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "chon ban mix DAY DU",
+        null,
+        null
+      ],
+      "title": "7. Complete original song · final mux only"
+    },
+    {
+      "id": 8,
+      "type": "LoadAudio",
+      "pos": [
+        400,
+        930
+      ],
+      "size": [
+        430,
+        120
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            23
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "chon LEAD VOCAL da tach",
+        null,
+        null
+      ],
+      "title": "8. Required isolated vocal / clear speech · Vocal Lock"
+    },
+    {
+      "id": 9,
+      "type": "MiniMaxH3MVVocalLockScenePlannerV2T8Advanced",
+      "pos": [
+        930,
+        0
+      ],
+      "size": [
+        600,
+        470
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "full_song",
+          "type": "AUDIO",
+          "link": 7
+        },
+        {
+          "name": "vocal_lock_audio",
+          "type": "AUDIO",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "links": [
+            11,
+            14
+          ]
+        },
+        {
+          "name": "scene_count",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "duration_seconds",
+          "type": "FLOAT",
+          "links": []
+        },
+        {
+          "name": "timeline_json",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "report_json",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3MVVocalLockScenePlannerV2T8Advanced"
+      },
+      "widgets_values": [
+        2.5,
+        3.0,
+        3.5,
+        50,
+        0.7,
+        ""
+      ],
+      "title": "9. V2 local isolated-vocal scene plan · no API",
+      "color": "#325f6d",
+      "bgcolor": "#19333a"
+    },
+    {
+      "id": 10,
+      "type": "MiniMaxH3MVVocalLockVisualDirectorV3T8Advanced",
+      "pos": [
+        930,
+        540
+      ],
+      "size": [
+        720,
+        720
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "link": 15
+        },
+        {
+          "name": "scene_directions_json",
+          "type": "STRING",
+          "link": 16,
+          "widget": {
+            "name": "scene_directions_json"
+          }
+        },
+        {
+          "name": "global_creative_prompt",
+          "type": "STRING",
+          "link": 17,
+          "widget": {
+            "name": "global_creative_prompt"
+          }
+        },
+        {
+          "name": "visual_style",
+          "type": "STRING",
+          "link": 18,
+          "widget": {
+            "name": "visual_style"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mv_vocal_lock_prompt_plan",
+          "type": "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",
+          "links": [
+            12
+          ]
+        },
+        {
+          "name": "segment_prompts_json",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "prompt_relay_events",
+          "type": "H3_T8_PROMPT_RELAY_EVENTS",
+          "links": []
+        },
+        {
+          "name": "prompt_preview",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "report_json",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3MVVocalLockVisualDirectorV3T8Advanced"
+      },
+      "widgets_values": [
+        "",
+        "the same lead performer shown in the reference picture",
+        "",
+        "",
+        "singing",
+        "English",
+        "",
+        "keeps his mouth closed and completely still with no singing or speaking shapes, holds himself for the camera and lets his body and eyes carry the beat instead"
+      ],
+      "title": "10. V3 explicit shot plan · one person / one face",
+      "color": "#5d4d79",
+      "bgcolor": "#30283f"
+    },
+    {
+      "id": 11,
+      "type": "MVRendererMultiRef",
+      "pos": [
+        1740,
+        0
+      ],
+      "size": [
+        780,
+        960
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 21
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        },
+        {
+          "name": "video_vae",
+          "type": "VAE",
+          "link": 4
+        },
+        {
+          "name": "audio_vae",
+          "type": "VAE",
+          "link": 5
+        },
+        {
+          "name": "reference_image",
+          "type": "IMAGE",
+          "link": 6
+        },
+        {
+          "name": "full_song",
+          "type": "AUDIO",
+          "link": 8
+        },
+        {
+          "name": "vocal_lock_audio",
+          "type": "AUDIO",
+          "link": 10
+        },
+        {
+          "name": "mv_vocal_lock_prompt_plan",
+          "type": "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",
+          "link": 12
+        },
+        {
+          "name": "ref_image_2",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_3",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_4",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_5",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_6",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_7",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_8",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_9",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_1",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_audio_1",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_2",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_audio_2",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_3",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_audio_3",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_audio_1",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_audio_2",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_audio_3",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "video_path",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 0
+        },
+        {
+          "name": "manifest_path",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 1
+        },
+        {
+          "name": "completed_scenes",
+          "type": "INT",
+          "links": [],
+          "slot_index": 2
+        },
+        {
+          "name": "status",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 3
+        },
+        {
+          "name": "report",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 4
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MVRendererMultiRef"
+      },
+      "widgets_values": [
+        "doi_ten_nay_moi_lan_chay",
+        1344,
+        768,
+        424242,
+        6,
+        12.0,
+        3.0,
+        "dual_clock_euler",
+        "beta",
+        true,
+        "MV_OUT",
+        8,
+        18,
+        "singularity_pruned_v1.3_int8+turbo4"
+      ],
+      "title": "MV Renderer Multi-Ref",
+      "color": "#6d3f71",
+      "bgcolor": "#381f3b"
+    },
+    {
+      "id": 12,
+      "type": "MarkdownNote",
+      "pos": [
+        2600,
+        0
+      ],
+      "size": [
+        650,
+        330
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## 官方 Ref2V Turbo4 合同\n必须使用 `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors`、strength 1.0、Euler/simple、4 NFE、shift 12/3。`vocal_lock_audio`逐场景进入H3 `lock_source`；`full_song`只在所有画面通过并合成后混入一次。"
+      ],
+      "title": "NOTE 1 · 两条音频职责不同",
+      "color": "#604b1d",
+      "bgcolor": "#332810"
+    },
+    {
+      "id": 13,
+      "type": "MarkdownNote",
+      "pos": [
+        2600,
+        390
+      ],
+      "size": [
+        650,
+        330
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## 每一镜都不是只换camera pattern\nV3为每个scene保存camera / lighting / performance / emotion。留空使用确定性安全棚拍弧线；也可填与scene_count等长的JSON对象列表。整幅画面强制恰好一名人物和一张人脸，并禁止镜像、反射、投影、屏幕、海报、肖像、重影、双重曝光、背景人物和可见道具。"
+      ],
+      "title": "NOTE 2 · V3单人物空间合同",
+      "color": "#214d35",
+      "bgcolor": "#12281d"
+    },
+    {
+      "id": 14,
+      "type": "MarkdownNote",
+      "pos": [
+        2600,
+        780
+      ],
+      "size": [
+        650,
+        360
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## accepted只表示文件和合同已落盘，不表示画质通过\n首次32秒阶段门的第4镜出现巨幅重复脸，已判失败并停止第5镜。V3只能降低已知风险，不能自动证明画面正确。每镜必须检查全程单人物、身份、背景、轮廓和口型；失败后换新chain，不能续用旧accepted片段。32秒/5镜通过后才允许约90秒终验。"
+      ],
+      "title": "NOTE 3 · 失败镜头不能靠accepted计数通过",
+      "color": "#6b3030",
+      "bgcolor": "#371919"
+    },
+    {
+      "id": 15,
+      "type": "MiniMaxH3QwenReferencePrefixCacheT8Advanced",
+      "pos": [
+        430,
+        150
+      ],
+      "size": [
+        430,
+        190
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "links": [
+            3
+          ]
+        },
+        {
+          "name": "cache_handle",
+          "type": "H3_T8_QWEN_PREFIX_CACHE",
+          "links": []
+        },
+        {
+          "name": "report_json",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3QwenReferencePrefixCacheT8Advanced"
+      },
+      "widgets_values": [
+        "memory_lru_exp",
+        1,
+        1024.0,
+        0
+      ],
+      "title": "3b. Same-reference Qwen prefix cache · bounded CPU LRU",
+      "color": "#315b55",
+      "bgcolor": "#19302d"
+    },
+    {
+      "id": 7001,
+      "type": "MVAutoDirector",
+      "pos": [
+        390,
+        540
+      ],
+      "size": [
+        460,
+        460
+      ],
+      "flags": {},
+      "order": 50,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "links": [
+            15
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "scene_directions_json",
+          "type": "STRING",
+          "links": [
+            16
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "global_creative_prompt",
+          "type": "STRING",
+          "links": [
+            17
+          ],
+          "slot_index": 2
+        },
+        {
+          "name": "visual_style",
+          "type": "STRING",
+          "links": [
+            18
+          ],
+          "slot_index": 3
+        },
+        {
+          "name": "report",
+          "type": "STRING",
+          "links": [
+            19
+          ],
+          "slot_index": 4
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MVAutoDirector"
+      },
+      "widgets_values": [
+        "custom",
+        0,
+        "",
+        "",
+        3,
+        "auto",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 7002,
+      "type": "PreviewAny",
+      "pos": [
+        390,
+        920
+      ],
+      "size": [
+        440,
+        260
+      ],
+      "flags": {},
+      "order": 60,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 19
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      }
+    },
+    {
+      "id": 9001,
+      "type": "MarkdownNote",
+      "pos": [
+        -330,
+        300
+      ],
+      "size": [
+        700,
+        1500
+      ],
+      "flags": {},
+      "order": 999,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# How to use this workflow\n\nThree modes. They differ in two places only: whether the renderer is bypassed,\nand the `end_time` on the two `AudioCrop` nodes.\n\n---\n\n## A. Preview the scene plan — 1 second, no GPU\n\n1. Select `MV Renderer Multi-Ref`, press **Ctrl+B** to bypass it\n2. Run\n3. Read the table on `PreviewAny`: which angle each scene got, and whether it\n   is singing or posing\n4. Not happy? Change `seed` on `MV Auto Director` and run again\n\nMeasured at **1.1 seconds**. This is the cheapest way to iterate on an idea —\nuse it instead of generating short test clips. Only when the plan looks right,\npress Ctrl+B again and render for real.\n\n## B. Render a short excerpt\n\n1. Change `end_time` on **BOTH** `AudioCrop` nodes, e.g. `1:21` → `1:41`\n2. Change `chain_id`, add a `_test` suffix\n3. Run\n\nAbout 6 scenes for 20 seconds at `max_scene_seconds = 3.5`.\n\n**Change both nodes to the same range.** Change one and the two audio files end\nup different lengths, and the renderer refuses with\n`resolves to N frames but the MV scene plan requires M`.\n\nWorth knowing before you bother: a short run costs **more** per scene, because\nthe 20 GB model reloads for every scene at ~78 seconds a time.\n\n| | Minutes per scene |\n|---|---|\n| Full song, 59 scenes | **1.57** |\n| 20-second excerpt | **6.93** |\n\nA 20-second test takes ~45 minutes; the whole song takes ~100. Prefer mode A.\n\n## C. Render the whole song\n\n1. `start_time` `0:00`, `end_time` = song length **minus 1–2 seconds**\n2. Change `chain_id`\n3. Run\n\nInterrupted? Run again with the **same** `chain_id` and it resumes at the\nunfinished scene. A new `chain_id` starts over. The same `chain_id` after it\nalready finished re-exports the old video in about a second.\n\n---\n\n## chain_id\n\n`chain_id` names the run and its output folder. It is also how resume works:\n\n| Situation | What happens |\n|---|---|\n| Interrupted, re-run with the **same** id | resumes at the unfinished scene |\n| Finished, re-run with the **same** id | **generates nothing**, re-exports the old video |\n| New id | starts from scene 0 |\n\nThe middle row is the trap: no error. You paste a new scene description, hit\nRun, it finishes instantly and hands you a file — the old one.\n\nTell-tale signs: the run ends in seconds, no `100%|████ 6/6` sampling bar in\nthe console, the GPU stays quiet.\n\n**New look means new chain_id.**\n\n---\n\n## The four paste-in fields\n\n`MV Auto Director` defaults to `preset = custom`, which reads these four, in\nthe order they appear on the node:\n\n| | Field | Required |\n|---|---|---|\n| 1 | `custom_global_prompt` | **yes** — errors out if empty |\n| 2 | `custom_angles_json` | no — falls back to 51 built-in angles |\n| 3 | `custom_light` | no, but worth writing |\n| 4 | `custom_pose` | no — falls back to 26 built-in poses |\n\nLock the light to a fixed position in the world so cuts do not flicker.\n\nConstraints the node checks for you: 500 characters per field, 21 words H3\nrejects, 6 phrases it silently rewrites. Full list in the repo README.\n\n---\n\n## Singing and posing\n\nThe character does not have to lip-sync every vocal moment. Real music videos\nlet the vocal run while the picture cuts to the singer just existing.\n\n| Field | |\n|---|---|\n| `pose_scenes` | `\"3,7,12\"` or `\"3-5,9\"` — force those scenes to stop lip-syncing |\n| `pose_every` | every Nth scene poses; ignored when `pose_scenes` is set |\n\nA third of the scenes is a reasonable rhythm. Good places: the intro, the\noutro, a breakdown, the scene right after a chorus payoff.\n\nThe scene plan is hash-signed, so this node re-signs it after editing. That is\nwhy `scene_plan` must route **through** `MV Auto Director` and not straight\nfrom the planner.\n\n---\n\n## busy_background\n\nLeave it on **`auto`**. The node reads your scene description, looks for crowd\nwords (`people`, `players`, `passers-by`, `group of`…) and excludes negations\n(`nobody else present`, `deserted`).\n\nWhen on, it avoids pairing expensive moves (`LOW SHUTTER`, `3D ROTATION`,\n`SNORRICAM`, `ARC`) with a wide shot. Measured: the wrong pairing cost **16.7\nminutes** for a single scene instead of 1.7.\n\nOnly set `on`/`off` to override it.\n\n---\n\n## Small traps\n\n- After a node gains or changes a field, an older saved workflow still holds\n  the old value and fails with `Value not in list`. Click that field, pick a\n  value, save.\n- Closing the **console window** kills the server. Closing the **browser tab**\n  does not — reopen `127.0.0.1:8188` and it is still there.\n- Starting ComfyUI a second time while the first is alive gives\n  `Port 8188 is already in use`. Close the second window and use the first.\n"
+      ],
+      "widgets_values_named": {
+        "text": "# How to use this workflow\n\nThree modes. They differ in two places only: whether the renderer is bypassed,\nand the `end_time` on the two `AudioCrop` nodes.\n\n---\n\n## A. Preview the scene plan — 1 second, no GPU\n\n1. Select `MV Renderer Multi-Ref`, press **Ctrl+B** to bypass it\n2. Run\n3. Read the table on `PreviewAny`: which angle each scene got, and whether it\n   is singing or posing\n4. Not happy? Change `seed` on `MV Auto Director` and run again\n\nMeasured at **1.1 seconds**. This is the cheapest way to iterate on an idea —\nuse it instead of generating short test clips. Only when the plan looks right,\npress Ctrl+B again and render for real.\n\n## B. Render a short excerpt\n\n1. Change `end_time` on **BOTH** `AudioCrop` nodes, e.g. `1:21` → `1:41`\n2. Change `chain_id`, add a `_test` suffix\n3. Run\n\nAbout 6 scenes for 20 seconds at `max_scene_seconds = 3.5`.\n\n**Change both nodes to the same range.** Change one and the two audio files end\nup different lengths, and the renderer refuses with\n`resolves to N frames but the MV scene plan requires M`.\n\nWorth knowing before you bother: a short run costs **more** per scene, because\nthe 20 GB model reloads for every scene at ~78 seconds a time.\n\n| | Minutes per scene |\n|---|---|\n| Full song, 59 scenes | **1.57** |\n| 20-second excerpt | **6.93** |\n\nA 20-second test takes ~45 minutes; the whole song takes ~100. Prefer mode A.\n\n## C. Render the whole song\n\n1. `start_time` `0:00`, `end_time` = song length **minus 1–2 seconds**\n2. Change `chain_id`\n3. Run\n\nInterrupted? Run again with the **same** `chain_id` and it resumes at the\nunfinished scene. A new `chain_id` starts over. The same `chain_id` after it\nalready finished re-exports the old video in about a second.\n\n---\n\n## chain_id\n\n`chain_id` names the run and its output folder. It is also how resume works:\n\n| Situation | What happens |\n|---|---|\n| Interrupted, re-run with the **same** id | resumes at the unfinished scene |\n| Finished, re-run with the **same** id | **generates nothing**, re-exports the old video |\n| New id | starts from scene 0 |\n\nThe middle row is the trap: no error. You paste a new scene description, hit\nRun, it finishes instantly and hands you a file — the old one.\n\nTell-tale signs: the run ends in seconds, no `100%|████ 6/6` sampling bar in\nthe console, the GPU stays quiet.\n\n**New look means new chain_id.**\n\n---\n\n## The four paste-in fields\n\n`MV Auto Director` defaults to `preset = custom`, which reads these four, in\nthe order they appear on the node:\n\n| | Field | Required |\n|---|---|---|\n| 1 | `custom_global_prompt` | **yes** — errors out if empty |\n| 2 | `custom_angles_json` | no — falls back to 51 built-in angles |\n| 3 | `custom_light` | no, but worth writing |\n| 4 | `custom_pose` | no — falls back to 26 built-in poses |\n\nLock the light to a fixed position in the world so cuts do not flicker.\n\nConstraints the node checks for you: 500 characters per field, 21 words H3\nrejects, 6 phrases it silently rewrites. Full list in the repo README.\n\n---\n\n## Singing and posing\n\nThe character does not have to lip-sync every vocal moment. Real music videos\nlet the vocal run while the picture cuts to the singer just existing.\n\n| Field | |\n|---|---|\n| `pose_scenes` | `\"3,7,12\"` or `\"3-5,9\"` — force those scenes to stop lip-syncing |\n| `pose_every` | every Nth scene poses; ignored when `pose_scenes` is set |\n\nA third of the scenes is a reasonable rhythm. Good places: the intro, the\noutro, a breakdown, the scene right after a chorus payoff.\n\nThe scene plan is hash-signed, so this node re-signs it after editing. That is\nwhy `scene_plan` must route **through** `MV Auto Director` and not straight\nfrom the planner.\n\n---\n\n## busy_background\n\nLeave it on **`auto`**. The node reads your scene description, looks for crowd\nwords (`people`, `players`, `passers-by`, `group of`…) and excludes negations\n(`nobody else present`, `deserted`).\n\nWhen on, it avoids pairing expensive moves (`LOW SHUTTER`, `3D ROTATION`,\n`SNORRICAM`, `ARC`) with a wide shot. Measured: the wrong pairing cost **16.7\nminutes** for a single scene instead of 1.7.\n\nOnly set `on`/`off` to override it.\n\n---\n\n## Small traps\n\n- After a node gains or changes a field, an older saved workflow still holds\n  the old value and fails with `Value not in list`. Click that field, pick a\n  value, save.\n- Closing the **console window** kills the server. Closing the **browser tab**\n  does not — reopen `127.0.0.1:8188` and it is still there.\n- Starting ComfyUI a second time while the first is alive gives\n  `Port 8188 is already in use`. Close the second window and use the first.\n"
+      }
+    },
+    {
+      "id": 7050,
+      "type": "MiniMaxH3MemoryEfficientSageAttentionPatch",
+      "pos": [
+        400,
+        140
+      ],
+      "size": [
+        330,
+        30
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            21
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3MemoryEfficientSageAttentionPatch"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9002,
+      "type": "AudioCrop",
+      "pos": [
+        20,
+        1080
+      ],
+      "size": [
+        300,
+        80
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 22
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            7,
+            8
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AudioCrop"
+      },
+      "widgets_values": [
+        "0:00",
+        "2:42"
+      ]
+    },
+    {
+      "id": 9003,
+      "type": "AudioCrop",
+      "pos": [
+        420,
+        1080
+      ],
+      "size": [
+        300,
+        80
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            9,
+            10
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AudioCrop"
+      },
+      "widgets_values": [
+        "0:00",
+        "2:42"
+      ]
+    },
+    {
+      "id": 9004,
+      "type": "MarkdownNote",
+      "pos": [
+        3300,
+        0
+      ],
+      "size": [
+        640,
+        900
+      ],
+      "flags": {},
+      "order": 99,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "color": "#432",
+      "bgcolor": "#653",
+      "widgets_values": [
+        "## Multiple references\n\nThis node replaces T8's stock renderer. The stock one accepts a single image —\n`mv_lipsync_advanced.py:1649` hard-codes `{\"ref_image_1\": reference_image}` —\nwhile the builder underneath (`conditioning.py:392`) accepts **9 images,\n3 videos and 3 audios**. This node unlocks the rest.\n\nIt does not patch the T8 pack. It wraps `build_conditioning` for the duration\nof the call and restores it afterwards, so an upstream update will not undo it.\n\n### Connecting an image is not enough\n\nA reference only does something if the prompt names it:\n\n| Tag | Points to |\n|---|---|\n| `<Picture 1>` | `reference_image` |\n| `<Picture 2>` … `<Picture 9>` | `ref_image_2…9` |\n| `<Video 1..3>` · `<Audio 1..3>` | reference video / audio |\n\nWrite the tags in **`custom_global_prompt`** on `MV Auto Director`:\n\n> the man in `<Picture 1>` wearing the jacket from `<Picture 2>`, standing in\n> the place shown in `<Picture 3>`\n\nThat splits **face / outfit / location** into separate images. Naming a picture\nyou did not connect stops the job with a clear message instead of guessing.\nWriting `Picture 2` without the angle brackets is normalised automatically.\n\n### Three things to remember\n\n- **The extra references are not part of the resume contract.** Changing an\n  image while keeping the same `chain_id` silently reuses the old scenes. The\n  node prints a fingerprint of the extra reference set in `report` — when it\n  changes, change `chain_id`.\n- **More images of the same person means more consistency, not more variety.**\n  For variety give each image a distinct job and name it in the prompt.\n- **The tags are fixed for the whole chain**, so one chain is one outfit. To\n  change outfits mid-song, split the song at section boundaries: one chain and\n  one image per section, then join them.\n\nReference video needs at least 5 frames and is truncated to the scene length,\nthen aligned down to `17n+5`.\n"
+      ],
+      "widgets_values_named": {
+        "text": "## Multiple references\n\nThis node replaces T8's stock renderer. The stock one accepts a single image —\n`mv_lipsync_advanced.py:1649` hard-codes `{\"ref_image_1\": reference_image}` —\nwhile the builder underneath (`conditioning.py:392`) accepts **9 images,\n3 videos and 3 audios**. This node unlocks the rest.\n\nIt does not patch the T8 pack. It wraps `build_conditioning` for the duration\nof the call and restores it afterwards, so an upstream update will not undo it.\n\n### Connecting an image is not enough\n\nA reference only does something if the prompt names it:\n\n| Tag | Points to |\n|---|---|\n| `<Picture 1>` | `reference_image` |\n| `<Picture 2>` … `<Picture 9>` | `ref_image_2…9` |\n| `<Video 1..3>` · `<Audio 1..3>` | reference video / audio |\n\nWrite the tags in **`custom_global_prompt`** on `MV Auto Director`:\n\n> the man in `<Picture 1>` wearing the jacket from `<Picture 2>`, standing in\n> the place shown in `<Picture 3>`\n\nThat splits **face / outfit / location** into separate images. Naming a picture\nyou did not connect stops the job with a clear message instead of guessing.\nWriting `Picture 2` without the angle brackets is normalised automatically.\n\n### Three things to remember\n\n- **The extra references are not part of the resume contract.** Changing an\n  image while keeping the same `chain_id` silently reuses the old scenes. The\n  node prints a fingerprint of the extra reference set in `report` — when it\n  changes, change `chain_id`.\n- **More images of the same person means more consistency, not more variety.**\n  For variety give each image a distinct job and name it in the prompt.\n- **The tags are fixed for the whole chain**, so one chain is one outfit. To\n  change outfits mid-song, split the song at section boundaries: one chain and\n  one image per section, then join them.\n\nReference video needs at least 5 frames and is truncated to the scene length,\nthen aligned down to `17n+5`.\n"
+      }
+    },
+    {
+      "id": 9005,
+      "type": "MarkdownNote",
+      "pos": [
+        -1080,
+        300
+      ],
+      "size": [
+        700,
+        1500
+      ],
+      "flags": {},
+      "order": 98,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "color": "#233",
+      "bgcolor": "#355",
+      "widgets_values": [
+        "# Setup — read this first\n\nThis workflow renders a **complete lip-sync music video** in one run: it splits\nthe song into scenes, picks a different camera angle for each, generates them,\nconcatenates them and muxes the original song back on top. No ffmpeg, no video\neditor.\n\nOutput lands in\n`output/minimax_h3_t8_long_video/<chain_id>/assembled/..._master_audio.mp4`\n\n---\n\n## 1. Two node packs\n\nClone both into `ComfyUI/custom_nodes`, then restart ComfyUI:\n\n```\ngit clone https://github.com/T8mars/comfyui-minimax-h3-audio-T8\ngit clone https://github.com/oomsurvivor/comfyui-mv-autodirect\n```\n\nThe first wraps MiniMax H3 and does the generating. The second adds the two\nnodes that pick camera angles and widen the reference slots. Neither needs\nextra Python packages.\n\n---\n\n## 2. Five model files\n\n| File | Folder |\n|---|---|\n| `Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors` | `models/diffusion_models` |\n| `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` | `models/loras` |\n| `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors` | `models/text_encoders` |\n| `minimax_h3_video_vae_fp16.safetensors` | `models/vae` |\n| `minimax_h3_audio_vae_fp32.safetensors` | `models/vae` |\n\nRoughly 41 GB in total. The diffusion model alone stages about 20 GB of VRAM,\nso a 24 GB card is comfortable and anything smaller will swap constantly.\n\nMeasured on an RTX 4090: **~1.6 minutes per scene** over a full song.\n\nOther quantisations of the same model work — pick them in the loader nodes.\nThe LoRA is the official 4-step turbo distillation; do not run it at 8 steps.\n\n---\n\n## 3. Three input files\n\n| | Load it into |\n|---|---|\n| The full mixed song | top `LoadAudio` |\n| **Isolated lead vocal** | bottom `LoadAudio` |\n| One clear face, front or 3/4 | `LoadImage` |\n\nThe vocal stem is not optional. It drives the mouth shapes scene by scene,\nwhile the full mix is only added back at the very end.\n\nUse the **lead** vocal, not a stem that still has backing vocals in it. Backing\nvocals humming while the lead rests read as singing, and the character will\nopen their mouth in the wrong places.\n\nPut the image in `ComfyUI/input/`. `.mp3` loads fine, no need to convert.\n\n---\n\n## 4. Audio alignment — the one thing that will stop the run\n\nBoth audio files must resolve to the **same sample count**. A 13 ms difference\nis enough for the renderer to refuse the job with:\n\n```\nvocal_lock_audio resolves to N frames but the MV scene plan requires M\n```\n\nThe two `AudioCrop` nodes handle this, provided:\n\n- both are set to the **same** `start_time` and `end_time`\n- `end_time` is at least **1 second shorter** than the shorter file\n\nOn a 2:43 song, `2:42` works and `2:43` fails — cropping past the real length\nclamps each file to its own duration, and they differ.\n\n**Changing one AudioCrop and forgetting the other is the most common mistake.**\n\n---\n\n## 5. First run\n\nStart with the free preview. It costs no GPU time at all:\n\n1. Select `MV Renderer Multi-Ref`, press **Ctrl+B** to bypass it\n2. Run\n3. Read the table on `PreviewAny` — which angle each scene got, and whether it\n   is singing or posing\n4. Not happy? Change `seed` on `MV Auto Director` and run again\n\nThat takes about **1.1 seconds**. Use it to iterate on ideas instead of\ngenerating test clips.\n\nWhen the plan looks right, press **Ctrl+B** again to re-enable the renderer,\nset a fresh `chain_id`, and run.\n\n---\n\n## 6. chain_id — understand this before your first real run\n\n`chain_id` names the run and its output folder. It is also how resume works:\n\n| Situation | What happens |\n|---|---|\n| Run interrupted, re-run with the **same** `chain_id` | picks up at the unfinished scene |\n| Already finished, re-run with the **same** `chain_id` | **generates nothing**, re-exports the old video in about a second |\n| New `chain_id` | starts from scene 0 |\n\nThe middle row is the trap: it does not raise an error. You paste a new scene\ndescription, hit Run, it finishes instantly and produces a file — the old one.\n\nTell-tale signs: the run ends in seconds, the console shows no `100%|████ 6/6`\nsampling bar, the GPU stays quiet.\n\n**New look means new chain_id.**\n\n---\n\n## 7. Writing the prompt\n\n`MV Auto Director` defaults to `preset = custom`, which reads four fields, in\nthe order they appear on the node:\n\n| | Field | Required |\n|---|---|---|\n| 1 | `custom_global_prompt` | **yes** — the node errors out if empty |\n| 2 | `custom_angles_json` | no, falls back to 51 built-in angles |\n| 3 | `custom_light` | no, but worth writing |\n| 4 | `custom_pose` | no, falls back to 26 built-in posing actions |\n\nDescribe **who, where, and what surrounds them** in the global prompt. Lock the\nlight to a fixed position in the world so cuts do not flicker.\n\nThe angle library and its constraints — 500 characters per field, 21 banned\nwords, 6 phrases the director silently rewrites — are documented in the\n`comfyui-mv-autodirect` README.\n\n---\n\n## 8. Not every vocal moment has to be lip-synced\n\nReal music videos let the vocal run while the picture cuts to the singer just\nexisting — walking, leaning, staring off. Two fields control that:\n\n| Field | |\n|---|---|\n| `pose_scenes` | `\"3,7,12\"` or `\"3-5,9\"` — force those scenes to stop lip-syncing |\n| `pose_every` | every Nth scene becomes a posing scene; ignored when `pose_scenes` is set |\n\nA third of the scenes is a reasonable starting rhythm. Good places: the intro,\nthe outro, a breakdown, and the scene right after a chorus payoff.\n\n---\n\n## 9. Scene length and total time\n\n| `max_scene_seconds` | Scenes in a 2:43 song | Wall time |\n|---|---|---|\n| 3.5 | ~59 | ~100 min |\n| 6.0 | ~27 | ~60 min |\n\nCounter-intuitively, **a long run is cheaper per scene than a short one**. The\n20 GB model reloads for every scene at about 78 seconds a time, so the startup\ncost amortises over more scenes: 1.57 min/scene across a full song versus 6.93\nmin/scene on a 20-second excerpt.\n\nSo do not \"just test 20 seconds\". Use the free preview in section 5, then run\nat least a minute of real audio.\n"
+      ],
+      "widgets_values_named": {
+        "text": "# Setup — read this first\n\nThis workflow renders a **complete lip-sync music video** in one run: it splits\nthe song into scenes, picks a different camera angle for each, generates them,\nconcatenates them and muxes the original song back on top. No ffmpeg, no video\neditor.\n\nOutput lands in\n`output/minimax_h3_t8_long_video/<chain_id>/assembled/..._master_audio.mp4`\n\n---\n\n## 1. Two node packs\n\nClone both into `ComfyUI/custom_nodes`, then restart ComfyUI:\n\n```\ngit clone https://github.com/T8mars/comfyui-minimax-h3-audio-T8\ngit clone https://github.com/oomsurvivor/comfyui-mv-autodirect\n```\n\nThe first wraps MiniMax H3 and does the generating. The second adds the two\nnodes that pick camera angles and widen the reference slots. Neither needs\nextra Python packages.\n\n---\n\n## 2. Five model files\n\n| File | Folder |\n|---|---|\n| `Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors` | `models/diffusion_models` |\n| `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` | `models/loras` |\n| `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors` | `models/text_encoders` |\n| `minimax_h3_video_vae_fp16.safetensors` | `models/vae` |\n| `minimax_h3_audio_vae_fp32.safetensors` | `models/vae` |\n\nRoughly 41 GB in total. The diffusion model alone stages about 20 GB of VRAM,\nso a 24 GB card is comfortable and anything smaller will swap constantly.\n\nMeasured on an RTX 4090: **~1.6 minutes per scene** over a full song.\n\nOther quantisations of the same model work — pick them in the loader nodes.\nThe LoRA is the official 4-step turbo distillation; do not run it at 8 steps.\n\n---\n\n## 3. Three input files\n\n| | Load it into |\n|---|---|\n| The full mixed song | top `LoadAudio` |\n| **Isolated lead vocal** | bottom `LoadAudio` |\n| One clear face, front or 3/4 | `LoadImage` |\n\nThe vocal stem is not optional. It drives the mouth shapes scene by scene,\nwhile the full mix is only added back at the very end.\n\nUse the **lead** vocal, not a stem that still has backing vocals in it. Backing\nvocals humming while the lead rests read as singing, and the character will\nopen their mouth in the wrong places.\n\nPut the image in `ComfyUI/input/`. `.mp3` loads fine, no need to convert.\n\n---\n\n## 4. Audio alignment — the one thing that will stop the run\n\nBoth audio files must resolve to the **same sample count**. A 13 ms difference\nis enough for the renderer to refuse the job with:\n\n```\nvocal_lock_audio resolves to N frames but the MV scene plan requires M\n```\n\nThe two `AudioCrop` nodes handle this, provided:\n\n- both are set to the **same** `start_time` and `end_time`\n- `end_time` is at least **1 second shorter** than the shorter file\n\nOn a 2:43 song, `2:42` works and `2:43` fails — cropping past the real length\nclamps each file to its own duration, and they differ.\n\n**Changing one AudioCrop and forgetting the other is the most common mistake.**\n\n---\n\n## 5. First run\n\nStart with the free preview. It costs no GPU time at all:\n\n1. Select `MV Renderer Multi-Ref`, press **Ctrl+B** to bypass it\n2. Run\n3. Read the table on `PreviewAny` — which angle each scene got, and whether it\n   is singing or posing\n4. Not happy? Change `seed` on `MV Auto Director` and run again\n\nThat takes about **1.1 seconds**. Use it to iterate on ideas instead of\ngenerating test clips.\n\nWhen the plan looks right, press **Ctrl+B** again to re-enable the renderer,\nset a fresh `chain_id`, and run.\n\n---\n\n## 6. chain_id — understand this before your first real run\n\n`chain_id` names the run and its output folder. It is also how resume works:\n\n| Situation | What happens |\n|---|---|\n| Run interrupted, re-run with the **same** `chain_id` | picks up at the unfinished scene |\n| Already finished, re-run with the **same** `chain_id` | **generates nothing**, re-exports the old video in about a second |\n| New `chain_id` | starts from scene 0 |\n\nThe middle row is the trap: it does not raise an error. You paste a new scene\ndescription, hit Run, it finishes instantly and produces a file — the old one.\n\nTell-tale signs: the run ends in seconds, the console shows no `100%|████ 6/6`\nsampling bar, the GPU stays quiet.\n\n**New look means new chain_id.**\n\n---\n\n## 7. Writing the prompt\n\n`MV Auto Director` defaults to `preset = custom`, which reads four fields, in\nthe order they appear on the node:\n\n| | Field | Required |\n|---|---|---|\n| 1 | `custom_global_prompt` | **yes** — the node errors out if empty |\n| 2 | `custom_angles_json` | no, falls back to 51 built-in angles |\n| 3 | `custom_light` | no, but worth writing |\n| 4 | `custom_pose` | no, falls back to 26 built-in posing actions |\n\nDescribe **who, where, and what surrounds them** in the global prompt. Lock the\nlight to a fixed position in the world so cuts do not flicker.\n\nThe angle library and its constraints — 500 characters per field, 21 banned\nwords, 6 phrases the director silently rewrites — are documented in the\n`comfyui-mv-autodirect` README.\n\n---\n\n## 8. Not every vocal moment has to be lip-synced\n\nReal music videos let the vocal run while the picture cuts to the singer just\nexisting — walking, leaning, staring off. Two fields control that:\n\n| Field | |\n|---|---|\n| `pose_scenes` | `\"3,7,12\"` or `\"3-5,9\"` — force those scenes to stop lip-syncing |\n| `pose_every` | every Nth scene becomes a posing scene; ignored when `pose_scenes` is set |\n\nA third of the scenes is a reasonable starting rhythm. Good places: the intro,\nthe outro, a breakdown, and the scene right after a chorus payoff.\n\n---\n\n## 9. Scene length and total time\n\n| `max_scene_seconds` | Scenes in a 2:43 song | Wall time |\n|---|---|---|\n| 3.5 | ~59 | ~100 min |\n| 6.0 | ~27 | ~60 min |\n\nCounter-intuitively, **a long run is cheaper per scene than a short one**. The\n20 GB model reloads for every scene at about 78 seconds a time, so the startup\ncost amortises over more scenes: 1.57 min/scene across a full song versus 6.93\nmin/scene on a 20-second excerpt.\n\nSo do not \"just test 20 seconds\". Use the free preview in section 5, then run\nat least a minute of real audio.\n"
+      }
+    }
+  ],
+  "links": [
+    [
+      13,
+      3,
+      0,
+      15,
+      0,
+      "CLIP"
+    ],
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "MODEL"
+    ],
+    [
+      3,
+      15,
+      0,
+      11,
+      1,
+      "CLIP"
+    ],
+    [
+      4,
+      4,
+      0,
+      11,
+      2,
+      "VAE"
+    ],
+    [
+      5,
+      5,
+      0,
+      11,
+      3,
+      "VAE"
+    ],
+    [
+      6,
+      6,
+      0,
+      11,
+      4,
+      "IMAGE"
+    ],
+    [
+      7,
+      9002,
+      0,
+      9,
+      0,
+      "AUDIO"
+    ],
+    [
+      8,
+      9002,
+      0,
+      11,
+      5,
+      "AUDIO"
+    ],
+    [
+      9,
+      9003,
+      0,
+      9,
+      1,
+      "AUDIO"
+    ],
+    [
+      10,
+      9003,
+      0,
+      11,
+      6,
+      "AUDIO"
+    ],
+    [
+      12,
+      10,
+      0,
+      11,
+      7,
+      "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN"
+    ],
+    [
+      14,
+      9,
+      0,
+      7001,
+      0,
+      "H3_T8_MV_SCENE_PLAN"
+    ],
+    [
+      15,
+      7001,
+      0,
+      10,
+      0,
+      "H3_T8_MV_SCENE_PLAN"
+    ],
+    [
+      16,
+      7001,
+      1,
+      10,
+      1,
+      "STRING"
+    ],
+    [
+      17,
+      7001,
+      2,
+      10,
+      2,
+      "STRING"
+    ],
+    [
+      18,
+      7001,
+      3,
+      10,
+      3,
+      "STRING"
+    ],
+    [
+      19,
+      7001,
+      4,
+      7002,
+      0,
+      "*"
+    ],
+    [
+      20,
+      2,
+      0,
+      7050,
+      0,
+      "MODEL"
+    ],
+    [
+      21,
+      7050,
+      0,
+      11,
+      0,
+      "MODEL"
+    ],
+    [
+      22,
+      7,
+      0,
+      9002,
+      0,
+      "AUDIO"
+    ],
+    [
+      23,
+      8,
+      0,
+      9003,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "Local H3 models + reference + two local audio tracks",
+      "bounding": [
+        -40,
+        -70,
+        900,
+        1210
+      ],
+      "color": "#3f789e",
+      "font_size": 26,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "V2 isolated-vocal planning + official Ref2VA compiler",
+      "bounding": [
+        890,
+        -70,
+        800,
+        1390
+      ],
+      "color": "#397382",
+      "font_size": 26,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "Strictly serial local H3 Vocal Lock generation",
+      "bounding": [
+        1700,
+        -70,
+        860,
+        1090
+      ],
+      "color": "#704c91",
+      "font_size": 26,
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "Read before running",
+      "bounding": [
+        2560,
+        -70,
+        730,
+        1280
+      ],
+      "color": "#8b6b32",
+      "font_size": 26,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.52,
+      "offset": [
+        70,
+        130
+      ]
+    },
+    "ue_links": [],
+    "t8_mv_state": "all_local_mv_vocal_lock_v3_visual_director"
+  },
+  "version": 0.4
+}

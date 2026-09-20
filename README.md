@@ -102,8 +102,8 @@ What happens next:
 
    Or say the word and it drives ComfyUI for you instead.
 
-Steps 2 and 4 are hard stops. A full song takes about 100 minutes to render, so
-the skill makes you look at a free 1.1-second preview first.
+Steps 2 and 4 are hard stops. Rendering a full song takes a long time, so the
+skill makes you look at the free scene-plan preview first.
 
 The angle block runs to tens of thousands of characters, so the skill puts it on
 your clipboard rather than printing it — click the field and press Ctrl+V.
@@ -174,9 +174,9 @@ Target distribution: `CU 12%`, `MCU 24%`, `MS 31%`, `WS 33%`.
 ### Why `busy_background` matters
 
 Expensive moves (`LOW SHUTTER`, `3D ROTATION`, `SNORRICAM`, `ARC`) combined with
-a wide shot over a busy background are brutally slow. Measured on one scene:
-**16.7 minutes versus 1.7** for a normal shot. On `auto` the node scans your
-description for crowd words and avoids that combination on its own.
+a wide shot over a busy background are brutally slow — roughly ten times a
+normal shot. On `auto` the node scans your description for crowd words and
+avoids that combination on its own.
 
 ### Writing your own angles
 

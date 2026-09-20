@@ -186,29 +186,28 @@ Over 100 MB, also produce a 960p copy for quick viewing and keep the original.
 
 ## Three ways to run it in the GUI
 
-### A. Preview the scene plan — 1 second, no GPU
+### A. Preview the scene plan — no GPU
 
 Bypass `MV Renderer Multi-Ref` with **Ctrl+B**, Run, read the table on
 `PreviewAny`. Change `seed` and run again until it looks right.
 
-Measured at 1.1 seconds. This replaces rendering test clips.
+It costs no GPU time at all. This replaces rendering test clips.
 
 ### B. Short excerpt
 
 Change `end_time` on **both** `AudioCrop` nodes and use a new `chain_id`.
 
-A short run costs **more** per scene — the 20 GB model reloads every scene at
-~78 seconds a time. Full song: 1.57 min/scene. 20-second excerpt: 6.93. A
-20-second test takes ~45 minutes; the whole song takes ~100. Prefer mode A.
+A short run costs **more** per scene — the diffusion model reloads for every
+scene, and that fixed cost is spread over fewer scenes. Prefer mode A.
 
 ### C. Full song
 
 `start_time` `0:00`, `end_time` = song length minus 1–2 seconds, new `chain_id`.
 
-| `max_scene_seconds` | Scenes in a 2:43 song | Wall time |
-|---|---|---|
-| 3.5 | ~59 | ~100 min |
-| 6.0 | ~27 | ~60 min |
+| `max_scene_seconds` | Scenes in a 2:43 song |
+|---|---|
+| 3.5 | ~59 |
+| 6.0 | ~27 |
 
 H3's training range is ~124–362 frames (5.2–15.1 s). Scenes of 2.5–3.5 s
 (60–84 frames) sit **below** that and still look fine.

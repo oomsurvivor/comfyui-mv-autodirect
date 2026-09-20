@@ -39,6 +39,18 @@ they cover the mistakes that cost the most time.
 
 ---
 
+## If you use Claude Code
+
+`skill/SKILL.md` is a [Claude Code skill](https://docs.claude.com/en/docs/claude-code/skills).
+Copy the `mv-h3` folder into `~/.claude/skills/` and type `/mv-h3`, and the
+assistant walks the whole process: it measures the song's energy curve, proposes
+a setting, writes an angle library to match, shows you the scene plan, and only
+renders once you approve.
+
+It is optional. Everything works by hand from the workflow alone.
+
+---
+
 ## Models
 
 Five files, about 41.3 GB:

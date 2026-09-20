@@ -27,7 +27,7 @@ Restart ComfyUI. No extra Python packages.
 
 ### A ready-made workflow
 
-`MV_H3.json` is a complete chain: load a song, its isolated vocal and
+`workflows/MV_H3.json` is a complete chain: load a song, its isolated vocal and
 one photo, press Run, get a finished music video with the original track muxed
 back on. Drop it into `ComfyUI/user/default/workflows/` or drag it onto the
 canvas.

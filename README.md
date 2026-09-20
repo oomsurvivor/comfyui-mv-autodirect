@@ -41,13 +41,57 @@ they cover the mistakes that cost the most time.
 
 ## If you use Claude Code
 
-`skill/SKILL.md` is a [Claude Code skill](https://docs.claude.com/en/docs/claude-code/skills).
-Copy the `mv-h3` folder into `~/.claude/skills/` and type `/mv-h3`, and the
-assistant walks the whole process: it measures the song's energy curve, proposes
-a setting, writes an angle library to match, shows you the scene plan, and only
-renders once you approve.
+`skill/SKILL.md` is a [Claude Code skill](https://docs.claude.com/en/docs/claude-code/skills)
+that writes the prompts for you. Optional — the workflow works by hand without it.
 
-It is optional. Everything works by hand from the workflow alone.
+### Install
+
+Copy it into your skills folder as `mv-h3/SKILL.md`:
+
+```bash
+mkdir -p ~/.claude/skills/mv-h3
+cp skill/SKILL.md ~/.claude/skills/mv-h3/SKILL.md
+```
+
+On Windows that folder is `%USERPROFILE%\.claude\skills\mv-h3\`.
+
+### Bring three things
+
+| | Why |
+|---|---|
+| The **full mixed song** | muxed onto the delivery at the end |
+| The **isolated lead vocal** | drives the scene splits and the mouth shapes |
+| One **character photo**, single face | the person the video is about |
+
+The vocal stem is not optional and it has to be the *lead* — a stem that still
+carries backing vocals reads as singing while the lead rests, and the character
+opens their mouth in the wrong places. Any stem splitter will do.
+
+### Use it
+
+```
+/mv-h3
+C:\music\song.mp3
+C:\music\song (Lead Vocal).mp3
+C:\pictures\character.png
+```
+
+What happens next:
+
+1. **Measures the song** — downmixes it and reads the energy curve to find the
+   intro, verses, choruses, the breakdown and the outro. It does not guess a
+   setting from the title.
+2. **Proposes a setting** and waits. You get a scene description, a lighting
+   description and the reasoning, in your language. Nothing renders yet.
+3. **Writes an angle library** to match that setting, and lints it against the
+   500-character limit, the 21 banned words and the 6 rewritten phrases.
+4. **Shows the scene plan** — every scene with its angle, length, and whether it
+   sings or poses. Still nothing rendered.
+5. **Renders only after you agree**, or hands you the four blocks to paste into
+   the node yourself.
+
+Steps 2 and 4 are hard stops. A full song takes about 100 minutes to render, so
+the skill makes you look at a free 1.1-second preview first.
 
 ---
 

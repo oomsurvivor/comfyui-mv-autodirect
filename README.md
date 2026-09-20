@@ -34,8 +34,7 @@ canvas.
 
 It carries two notes on the canvas — a **read me** covering install, the model
 files, audio alignment, the three run modes and the `chain_id` trap, plus a
-shorter note on references beside the renderer. Read them before the first run;
-they cover the mistakes that cost the most time.
+shorter note on references beside the renderer.
 
 ---
 

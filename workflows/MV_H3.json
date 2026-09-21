@@ -1,8 +1,8 @@
 {
   "id": "796b561b-8b75-4dc4-9ca0-da4d531865ae",
   "revision": 0,
-  "last_node_id": 9005,
-  "last_link_id": 23,
+  "last_node_id": 9056,
+  "last_link_id": 58,
   "nodes": [
     {
       "id": 1,
@@ -500,103 +500,103 @@
         {
           "name": "ref_image_2",
           "type": "IMAGE",
-          "link": null,
+          "link": 25,
           "shape": 7
         },
         {
           "name": "ref_image_3",
           "type": "IMAGE",
-          "link": null,
+          "link": 27,
           "shape": 7
         },
         {
           "name": "ref_image_4",
           "type": "IMAGE",
-          "link": null,
+          "link": 29,
           "shape": 7
         },
         {
           "name": "ref_image_5",
           "type": "IMAGE",
-          "link": null,
+          "link": 31,
           "shape": 7
         },
         {
           "name": "ref_image_6",
           "type": "IMAGE",
-          "link": null,
+          "link": 33,
           "shape": 7
         },
         {
           "name": "ref_image_7",
           "type": "IMAGE",
-          "link": null,
+          "link": 35,
           "shape": 7
         },
         {
           "name": "ref_image_8",
           "type": "IMAGE",
-          "link": null,
+          "link": 37,
           "shape": 7
         },
         {
           "name": "ref_image_9",
           "type": "IMAGE",
-          "link": null,
+          "link": 39,
           "shape": 7
         },
         {
           "name": "ref_video_1",
           "type": "IMAGE",
-          "link": null,
+          "link": 41,
           "shape": 7
         },
         {
           "name": "ref_video_audio_1",
           "type": "AUDIO",
-          "link": null,
+          "link": 43,
           "shape": 7
         },
         {
           "name": "ref_video_2",
           "type": "IMAGE",
-          "link": null,
+          "link": 45,
           "shape": 7
         },
         {
           "name": "ref_video_audio_2",
           "type": "AUDIO",
-          "link": null,
+          "link": 47,
           "shape": 7
         },
         {
           "name": "ref_video_3",
           "type": "IMAGE",
-          "link": null,
+          "link": 49,
           "shape": 7
         },
         {
           "name": "ref_video_audio_3",
           "type": "AUDIO",
-          "link": null,
+          "link": 51,
           "shape": 7
         },
         {
           "name": "ref_audio_1",
           "type": "AUDIO",
-          "link": null,
+          "link": 53,
           "shape": 7
         },
         {
           "name": "ref_audio_2",
           "type": "AUDIO",
-          "link": null,
+          "link": 55,
           "shape": 7
         },
         {
           "name": "ref_audio_3",
           "type": "AUDIO",
-          "link": null,
+          "link": 57,
           "shape": 7
         }
       ],
@@ -843,10 +843,10 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "# MV H3\n\nSong + isolated vocal + one photo → finished music video, joined and muxed.\nNo ffmpeg.\n\nOutput: `output/minimax_h3_t8_long_video/<chain_id>/assembled/*_master_audio.mp4`\n\nFull docs, model download links and the Claude Code skill:\n**github.com/oomsurvivor/comfyui-mv-autodirect**\n\n---\n\n**Vocal must be the isolated lead stem.** Backing vocals count as singing and\nbreak the timing.\n\n**Both `AudioCrop` nodes need the same `start_time` / `end_time`**, and\n`end_time` at least 1 second shorter than the shorter file. Otherwise:\n`resolves to N frames but requires M`.\n\n## Three ways to run\n\n| | |\n|---|---|\n| **Preview** | Ctrl+B on the renderer → Run → read `PreviewAny`. **No GPU, near-instant.** Change `seed` and repeat until the plan looks right. |\n| **Excerpt** | change `end_time` on **both** AudioCrops + new `chain_id` |\n| **Full song** | `0:00` → length minus 1–2 s + new `chain_id` |\n\nShort runs cost *more* per scene — the model reloads for every scene and that\nfixed cost is spread over fewer of them. Iterate with Preview, not with short\nrenders.\n\n## chain_id — the one real trap\n\nReusing a **finished** `chain_id` generates nothing and re-exports the old\nvideo in a second, with no error. Signs: no `100%|███ 6/6` bar, GPU quiet.\n\n**New look → new chain_id.**\n\n## The four fields on MV Auto Director\n\nIn the order they appear: `custom_global_prompt` (required) ·\n`custom_angles_json` · `custom_light` · `custom_pose`\n\nDescribe crowds in the **global** field only — it is not word-filtered, the\nangle library is. Lock the light to a fixed world position so cuts don't\nflicker.\n\n`busy_background`: leave on `auto`. It avoids pairing expensive moves with wide\nshots, which can take roughly ten times as long.\n\n`pose_scenes` / `pose_every` make scenes stop lip-syncing. A third is a good\nrhythm; put them at the intro, a breakdown, and after a chorus payoff.\n\n## Notes\n\n`accepted/` means the file landed, not that the frame is good. Check for a\nduplicated face or a second ball — a bad scene poisons every scene after it.\n\nClosing the **console** kills the server; closing the **browser tab** does not.\n"
+        "# MV H3\n\nSong + isolated vocal + one photo → finished music video, joined and muxed.\nNo ffmpeg.\n\nOutput: `output/minimax_h3_t8_long_video/<chain_id>/assembled/*_master_audio.mp4`\n\nFull docs, model download links and the Claude Code skill:\n**github.com/oomsurvivor/comfyui-mv-autodirect**\n\n---\n\n**Vocal must be the isolated lead stem.** Backing vocals count as singing and\nbreak the timing.\n\n**Both `AudioCrop` nodes need the same `start_time` / `end_time`**, and\n`end_time` at least 1 second shorter than the shorter file. Otherwise:\n`resolves to N frames but requires M`.\n\n## Three ways to run\n\n| | |\n|---|---|\n| **Preview** | Ctrl+B on the renderer → Run → read `PreviewAny`. **No GPU, near-instant.** Change `seed` and repeat until the plan looks right. |\n| **Excerpt** | change `end_time` on **both** AudioCrops + new `chain_id` |\n| **Full song** | `0:00` → length minus 1–2 s + new `chain_id` |\n\nShort runs cost *more* per scene — the model reloads for every scene and that\nfixed cost is spread over fewer of them. Iterate with Preview, not with short\nrenders.\n\n## chain_id — the one real trap\n\nReusing a **finished** `chain_id` generates nothing and re-exports the old\nvideo in a second, with no error. Signs: no `100%|███ 6/6` bar, GPU quiet.\n\n**New look → new chain_id.**\n\n## Extra reference inputs\n\nDown the left edge, seventeen loaders are already wired to the renderer through\n`Set`/`Get` pairs: **8 images, 3 videos with their soundtracks, 3 audios**.\n\nThey ship **bypassed** (pale). To use one: click it, press **Ctrl+B**, pick the\nfile. Leave the rest bypassed - a bypassed loader sends nothing and the slot is\nsimply ignored.\n\nA reference does nothing until the prompt names it. Write the tag in\n`custom_global_prompt`:\n\n> the woman in `<Picture 1>` holding the flute from `<Picture 2>`\n\n`<Picture 1>` is the main image; `<Picture 2>`…`<Picture 9>` are the extra ones,\nin order. Same for `<Video 1..3>` and `<Audio 1..3>`.\n\n## The four fields on MV Auto Director\n\nIn the order they appear: `custom_global_prompt` (required) ·\n`custom_angles_json` · `custom_light` · `custom_pose`\n\nDescribe crowds in the **global** field only — it is not word-filtered, the\nangle library is. Lock the light to a fixed world position so cuts don't\nflicker.\n\n`busy_background`: leave on `auto`. It avoids pairing expensive moves with wide\nshots, which can take roughly ten times as long.\n\n`pose_scenes` / `pose_every` make scenes stop lip-syncing. A third is a good\nrhythm; put them at the intro, a breakdown, and after a chorus payoff.\n\n## Notes\n\n`accepted/` means the file landed, not that the frame is good. Check for a\nduplicated face or a second ball — a bad scene poisons every scene after it.\n\nClosing the **console** kills the server; closing the **browser tab** does not.\n"
       ],
       "widgets_values_named": {
-        "text": "# MV H3\n\nSong + isolated vocal + one photo → finished music video, joined and muxed.\nNo ffmpeg.\n\nOutput: `output/minimax_h3_t8_long_video/<chain_id>/assembled/*_master_audio.mp4`\n\nFull docs, model download links and the Claude Code skill:\n**github.com/oomsurvivor/comfyui-mv-autodirect**\n\n---\n\n**Vocal must be the isolated lead stem.** Backing vocals count as singing and\nbreak the timing.\n\n**Both `AudioCrop` nodes need the same `start_time` / `end_time`**, and\n`end_time` at least 1 second shorter than the shorter file. Otherwise:\n`resolves to N frames but requires M`.\n\n## Three ways to run\n\n| | |\n|---|---|\n| **Preview** | Ctrl+B on the renderer → Run → read `PreviewAny`. **No GPU, near-instant.** Change `seed` and repeat until the plan looks right. |\n| **Excerpt** | change `end_time` on **both** AudioCrops + new `chain_id` |\n| **Full song** | `0:00` → length minus 1–2 s + new `chain_id` |\n\nShort runs cost *more* per scene — the model reloads for every scene and that\nfixed cost is spread over fewer of them. Iterate with Preview, not with short\nrenders.\n\n## chain_id — the one real trap\n\nReusing a **finished** `chain_id` generates nothing and re-exports the old\nvideo in a second, with no error. Signs: no `100%|███ 6/6` bar, GPU quiet.\n\n**New look → new chain_id.**\n\n## The four fields on MV Auto Director\n\nIn the order they appear: `custom_global_prompt` (required) ·\n`custom_angles_json` · `custom_light` · `custom_pose`\n\nDescribe crowds in the **global** field only — it is not word-filtered, the\nangle library is. Lock the light to a fixed world position so cuts don't\nflicker.\n\n`busy_background`: leave on `auto`. It avoids pairing expensive moves with wide\nshots, which can take roughly ten times as long.\n\n`pose_scenes` / `pose_every` make scenes stop lip-syncing. A third is a good\nrhythm; put them at the intro, a breakdown, and after a chorus payoff.\n\n## Notes\n\n`accepted/` means the file landed, not that the frame is good. Check for a\nduplicated face or a second ball — a bad scene poisons every scene after it.\n\nClosing the **console** kills the server; closing the **browser tab** does not.\n"
+        "text": "# MV H3\n\nSong + isolated vocal + one photo → finished music video, joined and muxed.\nNo ffmpeg.\n\nOutput: `output/minimax_h3_t8_long_video/<chain_id>/assembled/*_master_audio.mp4`\n\nFull docs, model download links and the Claude Code skill:\n**github.com/oomsurvivor/comfyui-mv-autodirect**\n\n---\n\n**Vocal must be the isolated lead stem.** Backing vocals count as singing and\nbreak the timing.\n\n**Both `AudioCrop` nodes need the same `start_time` / `end_time`**, and\n`end_time` at least 1 second shorter than the shorter file. Otherwise:\n`resolves to N frames but requires M`.\n\n## Three ways to run\n\n| | |\n|---|---|\n| **Preview** | Ctrl+B on the renderer → Run → read `PreviewAny`. **No GPU, near-instant.** Change `seed` and repeat until the plan looks right. |\n| **Excerpt** | change `end_time` on **both** AudioCrops + new `chain_id` |\n| **Full song** | `0:00` → length minus 1–2 s + new `chain_id` |\n\nShort runs cost *more* per scene — the model reloads for every scene and that\nfixed cost is spread over fewer of them. Iterate with Preview, not with short\nrenders.\n\n## chain_id — the one real trap\n\nReusing a **finished** `chain_id` generates nothing and re-exports the old\nvideo in a second, with no error. Signs: no `100%|███ 6/6` bar, GPU quiet.\n\n**New look → new chain_id.**\n\n## Extra reference inputs\n\nDown the left edge, seventeen loaders are already wired to the renderer through\n`Set`/`Get` pairs: **8 images, 3 videos with their soundtracks, 3 audios**.\n\nThey ship **bypassed** (pale). To use one: click it, press **Ctrl+B**, pick the\nfile. Leave the rest bypassed - a bypassed loader sends nothing and the slot is\nsimply ignored.\n\nA reference does nothing until the prompt names it. Write the tag in\n`custom_global_prompt`:\n\n> the woman in `<Picture 1>` holding the flute from `<Picture 2>`\n\n`<Picture 1>` is the main image; `<Picture 2>`…`<Picture 9>` are the extra ones,\nin order. Same for `<Video 1..3>` and `<Audio 1..3>`.\n\n## The four fields on MV Auto Director\n\nIn the order they appear: `custom_global_prompt` (required) ·\n`custom_angles_json` · `custom_light` · `custom_pose`\n\nDescribe crowds in the **global** field only — it is not word-filtered, the\nangle library is. Lock the light to a fixed world position so cuts don't\nflicker.\n\n`busy_background`: leave on `auto`. It avoids pairing expensive moves with wide\nshots, which can take roughly ten times as long.\n\n`pose_scenes` / `pose_every` make scenes stop lip-syncing. A third is a good\nrhythm; put them at the intro, a breakdown, and after a chorus payoff.\n\n## Notes\n\n`accepted/` means the file landed, not that the frame is good. Check for a\nduplicated face or a second ball — a bad scene poisons every scene after it.\n\nClosing the **console** kills the server; closing the **browser tab** does not.\n"
       },
       "color": "#1d4d3a",
       "bgcolor": "#102a20"
@@ -992,6 +992,1849 @@
       "widgets_values_named": {
         "text": "## Multiple references\n\nUp to **9 images, 3 videos, 3 audios** — the stock renderer allows only one.\n\nA reference does nothing until the prompt names it:\n\n| Tag | Points to |\n|---|---|\n| `<Picture 1>` | `reference_image` |\n| `<Picture 2>`…`<Picture 9>` | `ref_image_2…9` |\n| `<Video 1..3>` · `<Audio 1..3>` | video / audio refs |\n\nWrite the tags in **`custom_global_prompt`**:\n\n> the man in `<Picture 1>` wearing the jacket from `<Picture 2>`\n\nThat splits face / outfit / location into separate images.\n\n**Extra refs are not part of the resume contract.** Swapping one while keeping\nthe same `chain_id` silently reuses the old scenes — the `report` output prints\na fingerprint; when it changes, change `chain_id`.\n\nMore images of the *same* person means more consistency, not more variety. Tags\nare fixed for the whole chain, so one chain is one outfit.\n\nReference video: at least 5 frames, truncated to the scene length.\n"
       }
+    },
+    {
+      "id": 9005,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        -1200
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            24
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9006,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        -1190
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 2"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 2"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9007,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        -1190
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 2",
+      "widgets_values": [
+        "Image 2"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            25
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9008,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        -820
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            26
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9009,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        -810
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 3"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 3"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9010,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        -810
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 3",
+      "widgets_values": [
+        "Image 3"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            27
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9011,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        -440
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            28
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9012,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        -430
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 4"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 4"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9013,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        -430
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 4",
+      "widgets_values": [
+        "Image 4"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            29
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9014,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        -60
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            30
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9015,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        -50
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 5"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 5"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9016,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        -50
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 5",
+      "widgets_values": [
+        "Image 5"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            31
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9017,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        320
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            32
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9018,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        330
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 6"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 6"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 32
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9019,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        330
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 6",
+      "widgets_values": [
+        "Image 6"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            33
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9020,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        700
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            34
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9021,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        710
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 7"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 7"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 34
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9022,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        710
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 7",
+      "widgets_values": [
+        "Image 7"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            35
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9023,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        1080
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            36
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9024,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        1090
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 8"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 8"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 36
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9025,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        1090
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 8",
+      "widgets_values": [
+        "Image 8"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            37
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9026,
+      "type": "LoadImage",
+      "pos": [
+        -2500,
+        1460
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "size": [
+        300,
+        314
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            38
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "widgets_values": [
+        "None",
+        "image"
+      ]
+    },
+    {
+      "id": 9027,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        1470
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Image 9"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Image 9"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9028,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        1470
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Image 9",
+      "widgets_values": [
+        "Image 9"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            39
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9029,
+      "type": "VHS_LoadVideo",
+      "pos": [
+        -2500,
+        1840
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "VHS_LoadVideo"
+      },
+      "size": [
+        300,
+        350
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            40
+          ]
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "video_info",
+          "type": "VHS_VIDEOINFO",
+          "links": null
+        }
+      ],
+      "widgets_values": {
+        "video": "",
+        "force_rate": 0,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff"
+      }
+    },
+    {
+      "id": 9030,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        1850
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Video 1"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Video 1"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 40
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9031,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        1850
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Video 1",
+      "widgets_values": [
+        "Ref Video 1"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            41
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9032,
+      "type": "LoadAudio",
+      "pos": [
+        -2500,
+        2220
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "size": [
+        300,
+        124
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            42
+          ]
+        }
+      ],
+      "widgets_values": [
+        "None",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 9033,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        2230
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Video Audio 1"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Video Audio 1"
+      },
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 42
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9034,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        2230
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Video Audio 1",
+      "widgets_values": [
+        "Ref Video Audio 1"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            43
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9035,
+      "type": "VHS_LoadVideo",
+      "pos": [
+        -2500,
+        2390
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "VHS_LoadVideo"
+      },
+      "size": [
+        300,
+        350
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            44
+          ]
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "video_info",
+          "type": "VHS_VIDEOINFO",
+          "links": null
+        }
+      ],
+      "widgets_values": {
+        "video": "",
+        "force_rate": 0,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff"
+      }
+    },
+    {
+      "id": 9036,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        2400
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Video 2"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Video 2"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9037,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        2400
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Video 2",
+      "widgets_values": [
+        "Ref Video 2"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9038,
+      "type": "LoadAudio",
+      "pos": [
+        -2500,
+        2770
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "size": [
+        300,
+        124
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            46
+          ]
+        }
+      ],
+      "widgets_values": [
+        "None",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 9039,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        2780
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Video Audio 2"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Video Audio 2"
+      },
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 46
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9040,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        2780
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Video Audio 2",
+      "widgets_values": [
+        "Ref Video Audio 2"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            47
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9041,
+      "type": "VHS_LoadVideo",
+      "pos": [
+        -2500,
+        2940
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "VHS_LoadVideo"
+      },
+      "size": [
+        300,
+        350
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            48
+          ]
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "video_info",
+          "type": "VHS_VIDEOINFO",
+          "links": null
+        }
+      ],
+      "widgets_values": {
+        "video": "",
+        "force_rate": 0,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff"
+      }
+    },
+    {
+      "id": 9042,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        2950
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Video 3"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Video 3"
+      },
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 48
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9043,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        2950
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Video 3",
+      "widgets_values": [
+        "Ref Video 3"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9044,
+      "type": "LoadAudio",
+      "pos": [
+        -2500,
+        3320
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "size": [
+        300,
+        124
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            50
+          ]
+        }
+      ],
+      "widgets_values": [
+        "None",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 9045,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        3330
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Video Audio 3"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Video Audio 3"
+      },
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 50
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9046,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        3330
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Video Audio 3",
+      "widgets_values": [
+        "Ref Video Audio 3"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            51
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9047,
+      "type": "LoadAudio",
+      "pos": [
+        -2500,
+        3490
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "size": [
+        300,
+        124
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            52
+          ]
+        }
+      ],
+      "widgets_values": [
+        "None",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 9048,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        3500
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Audio 1"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Audio 1"
+      },
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9049,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        3500
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Audio 1",
+      "widgets_values": [
+        "Ref Audio 1"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            53
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9050,
+      "type": "LoadAudio",
+      "pos": [
+        -2500,
+        3660
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "size": [
+        300,
+        124
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            54
+          ]
+        }
+      ],
+      "widgets_values": [
+        "None",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 9051,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        3670
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Audio 2"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Audio 2"
+      },
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9052,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        3670
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Audio 2",
+      "widgets_values": [
+        "Ref Audio 2"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            55
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9053,
+      "type": "LoadAudio",
+      "pos": [
+        -2500,
+        3830
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "size": [
+        300,
+        124
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            56
+          ]
+        }
+      ],
+      "widgets_values": [
+        "None",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 9054,
+      "type": "SetNode",
+      "pos": [
+        -2120,
+        3840
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "widgets_values": [
+        "Ref Audio 3"
+      ],
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Ref Audio 3"
+      },
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 56
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": 9055,
+      "type": "GetNode",
+      "pos": [
+        1380,
+        3840
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "title": "Get_Ref Audio 3",
+      "widgets_values": [
+        "Ref Audio 3"
+      ],
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            57
+          ]
+        }
+      ]
     }
   ],
   "links": [
@@ -1161,6 +3004,278 @@
       0,
       9003,
       0,
+      "AUDIO"
+    ],
+    [
+      24,
+      9005,
+      0,
+      9006,
+      0,
+      "IMAGE"
+    ],
+    [
+      25,
+      9007,
+      0,
+      11,
+      8,
+      "IMAGE"
+    ],
+    [
+      26,
+      9008,
+      0,
+      9009,
+      0,
+      "IMAGE"
+    ],
+    [
+      27,
+      9010,
+      0,
+      11,
+      9,
+      "IMAGE"
+    ],
+    [
+      28,
+      9011,
+      0,
+      9012,
+      0,
+      "IMAGE"
+    ],
+    [
+      29,
+      9013,
+      0,
+      11,
+      10,
+      "IMAGE"
+    ],
+    [
+      30,
+      9014,
+      0,
+      9015,
+      0,
+      "IMAGE"
+    ],
+    [
+      31,
+      9016,
+      0,
+      11,
+      11,
+      "IMAGE"
+    ],
+    [
+      32,
+      9017,
+      0,
+      9018,
+      0,
+      "IMAGE"
+    ],
+    [
+      33,
+      9019,
+      0,
+      11,
+      12,
+      "IMAGE"
+    ],
+    [
+      34,
+      9020,
+      0,
+      9021,
+      0,
+      "IMAGE"
+    ],
+    [
+      35,
+      9022,
+      0,
+      11,
+      13,
+      "IMAGE"
+    ],
+    [
+      36,
+      9023,
+      0,
+      9024,
+      0,
+      "IMAGE"
+    ],
+    [
+      37,
+      9025,
+      0,
+      11,
+      14,
+      "IMAGE"
+    ],
+    [
+      38,
+      9026,
+      0,
+      9027,
+      0,
+      "IMAGE"
+    ],
+    [
+      39,
+      9028,
+      0,
+      11,
+      15,
+      "IMAGE"
+    ],
+    [
+      40,
+      9029,
+      0,
+      9030,
+      0,
+      "IMAGE"
+    ],
+    [
+      41,
+      9031,
+      0,
+      11,
+      16,
+      "IMAGE"
+    ],
+    [
+      42,
+      9032,
+      0,
+      9033,
+      0,
+      "AUDIO"
+    ],
+    [
+      43,
+      9034,
+      0,
+      11,
+      17,
+      "AUDIO"
+    ],
+    [
+      44,
+      9035,
+      0,
+      9036,
+      0,
+      "IMAGE"
+    ],
+    [
+      45,
+      9037,
+      0,
+      11,
+      18,
+      "IMAGE"
+    ],
+    [
+      46,
+      9038,
+      0,
+      9039,
+      0,
+      "AUDIO"
+    ],
+    [
+      47,
+      9040,
+      0,
+      11,
+      19,
+      "AUDIO"
+    ],
+    [
+      48,
+      9041,
+      0,
+      9042,
+      0,
+      "IMAGE"
+    ],
+    [
+      49,
+      9043,
+      0,
+      11,
+      20,
+      "IMAGE"
+    ],
+    [
+      50,
+      9044,
+      0,
+      9045,
+      0,
+      "AUDIO"
+    ],
+    [
+      51,
+      9046,
+      0,
+      11,
+      21,
+      "AUDIO"
+    ],
+    [
+      52,
+      9047,
+      0,
+      9048,
+      0,
+      "AUDIO"
+    ],
+    [
+      53,
+      9049,
+      0,
+      11,
+      22,
+      "AUDIO"
+    ],
+    [
+      54,
+      9050,
+      0,
+      9051,
+      0,
+      "AUDIO"
+    ],
+    [
+      55,
+      9052,
+      0,
+      11,
+      23,
+      "AUDIO"
+    ],
+    [
+      56,
+      9053,
+      0,
+      9054,
+      0,
+      "AUDIO"
+    ],
+    [
+      57,
+      9055,
+      0,
+      11,
+      24,
       "AUDIO"
     ]
   ],

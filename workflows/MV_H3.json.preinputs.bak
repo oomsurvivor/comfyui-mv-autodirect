@@ -1,0 +1,1221 @@
+{
+  "id": "796b561b-8b75-4dc4-9ca0-da4d531865ae",
+  "revision": 0,
+  "last_node_id": 9005,
+  "last_link_id": 23,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "UNETLoader",
+      "pos": [
+        0,
+        0
+      ],
+      "size": [
+        360,
+        82
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors",
+        "default"
+      ],
+      "title": "1. Load local MiniMax H3 Ref2VA model"
+    },
+    {
+      "id": 2,
+      "type": "LoraLoaderBypassModelOnly",
+      "pos": [
+        400,
+        0
+      ],
+      "size": [
+        430,
+        105
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderBypassModelOnly"
+      },
+      "widgets_values": [
+        "minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors",
+        1.0
+      ],
+      "title": "2. Official Ref2V Turbo v0.1 · 4 NFE · strength 1.0"
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        0,
+        150
+      ],
+      "size": [
+        360,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+        "minimax",
+        "default"
+      ],
+      "title": "3. Local H3 Qwen3-VL CLIP · cached by exact reference prefix"
+    },
+    {
+      "id": 4,
+      "type": "VAELoader",
+      "pos": [
+        0,
+        310
+      ],
+      "size": [
+        360,
+        58
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "minimax_h3_video_vae_fp16.safetensors"
+      ],
+      "title": "4. H3 video VAE"
+    },
+    {
+      "id": 5,
+      "type": "VAELoader",
+      "pos": [
+        0,
+        420
+      ],
+      "size": [
+        360,
+        58
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "minimax_h3_audio_vae_fp32.safetensors"
+      ],
+      "title": "5. H3 audio VAE"
+    },
+    {
+      "id": 6,
+      "type": "LoadImage",
+      "pos": [
+        0,
+        560
+      ],
+      "size": [
+        360,
+        310
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "chon anh nhan vat, MOT mat",
+        "image"
+      ],
+      "title": "6. Replace with performer reference image"
+    },
+    {
+      "id": 7,
+      "type": "LoadAudio",
+      "pos": [
+        0,
+        930
+      ],
+      "size": [
+        360,
+        120
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "chon ban mix DAY DU",
+        null,
+        null
+      ],
+      "title": "7. Complete original song · final mux only"
+    },
+    {
+      "id": 8,
+      "type": "LoadAudio",
+      "pos": [
+        400,
+        930
+      ],
+      "size": [
+        430,
+        120
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            23
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "chon LEAD VOCAL da tach",
+        null,
+        null
+      ],
+      "title": "8. Required isolated vocal / clear speech · Vocal Lock"
+    },
+    {
+      "id": 9,
+      "type": "MiniMaxH3MVVocalLockScenePlannerV2T8Advanced",
+      "pos": [
+        930,
+        0
+      ],
+      "size": [
+        600,
+        470
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "full_song",
+          "type": "AUDIO",
+          "link": 7
+        },
+        {
+          "name": "vocal_lock_audio",
+          "type": "AUDIO",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "links": [
+            11,
+            14
+          ]
+        },
+        {
+          "name": "scene_count",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "duration_seconds",
+          "type": "FLOAT",
+          "links": []
+        },
+        {
+          "name": "timeline_json",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "report_json",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3MVVocalLockScenePlannerV2T8Advanced"
+      },
+      "widgets_values": [
+        2.5,
+        3.0,
+        3.5,
+        50,
+        0.7,
+        ""
+      ],
+      "title": "9. V2 local isolated-vocal scene plan · no API",
+      "color": "#325f6d",
+      "bgcolor": "#19333a"
+    },
+    {
+      "id": 10,
+      "type": "MiniMaxH3MVVocalLockVisualDirectorV3T8Advanced",
+      "pos": [
+        930,
+        540
+      ],
+      "size": [
+        720,
+        720
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "link": 15
+        },
+        {
+          "name": "scene_directions_json",
+          "type": "STRING",
+          "link": 16,
+          "widget": {
+            "name": "scene_directions_json"
+          }
+        },
+        {
+          "name": "global_creative_prompt",
+          "type": "STRING",
+          "link": 17,
+          "widget": {
+            "name": "global_creative_prompt"
+          }
+        },
+        {
+          "name": "visual_style",
+          "type": "STRING",
+          "link": 18,
+          "widget": {
+            "name": "visual_style"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mv_vocal_lock_prompt_plan",
+          "type": "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",
+          "links": [
+            12
+          ]
+        },
+        {
+          "name": "segment_prompts_json",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "prompt_relay_events",
+          "type": "H3_T8_PROMPT_RELAY_EVENTS",
+          "links": []
+        },
+        {
+          "name": "prompt_preview",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "report_json",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3MVVocalLockVisualDirectorV3T8Advanced"
+      },
+      "widgets_values": [
+        "",
+        "the same lead performer shown in the reference picture",
+        "",
+        "",
+        "singing",
+        "English",
+        "",
+        "keeps his mouth closed and completely still with no singing or speaking shapes, holds himself for the camera and lets his body and eyes carry the beat instead"
+      ],
+      "title": "10. V3 explicit shot plan · one person / one face",
+      "color": "#5d4d79",
+      "bgcolor": "#30283f"
+    },
+    {
+      "id": 11,
+      "type": "MVRendererMultiRef",
+      "pos": [
+        1740,
+        0
+      ],
+      "size": [
+        780,
+        960
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 21
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        },
+        {
+          "name": "video_vae",
+          "type": "VAE",
+          "link": 4
+        },
+        {
+          "name": "audio_vae",
+          "type": "VAE",
+          "link": 5
+        },
+        {
+          "name": "reference_image",
+          "type": "IMAGE",
+          "link": 6
+        },
+        {
+          "name": "full_song",
+          "type": "AUDIO",
+          "link": 8
+        },
+        {
+          "name": "vocal_lock_audio",
+          "type": "AUDIO",
+          "link": 10
+        },
+        {
+          "name": "mv_vocal_lock_prompt_plan",
+          "type": "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",
+          "link": 12
+        },
+        {
+          "name": "ref_image_2",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_3",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_4",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_5",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_6",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_7",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_8",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_image_9",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_1",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_audio_1",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_2",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_audio_2",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_3",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_video_audio_3",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_audio_1",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_audio_2",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "ref_audio_3",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "video_path",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 0
+        },
+        {
+          "name": "manifest_path",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 1
+        },
+        {
+          "name": "completed_scenes",
+          "type": "INT",
+          "links": [],
+          "slot_index": 2
+        },
+        {
+          "name": "status",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 3
+        },
+        {
+          "name": "report",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 4
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MVRendererMultiRef"
+      },
+      "widgets_values": [
+        "doi_ten_nay_moi_lan_chay",
+        1344,
+        768,
+        424242,
+        6,
+        12.0,
+        3.0,
+        "dual_clock_euler",
+        "beta",
+        true,
+        "MV_OUT",
+        8,
+        18,
+        "singularity_pruned_v1.3_int8+turbo4"
+      ],
+      "title": "MV Renderer Multi-Ref",
+      "color": "#6d3f71",
+      "bgcolor": "#381f3b"
+    },
+    {
+      "id": 15,
+      "type": "MiniMaxH3QwenReferencePrefixCacheT8Advanced",
+      "pos": [
+        430,
+        150
+      ],
+      "size": [
+        430,
+        190
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "links": [
+            3
+          ]
+        },
+        {
+          "name": "cache_handle",
+          "type": "H3_T8_QWEN_PREFIX_CACHE",
+          "links": []
+        },
+        {
+          "name": "report_json",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3QwenReferencePrefixCacheT8Advanced"
+      },
+      "widgets_values": [
+        "memory_lru_exp",
+        1,
+        1024.0,
+        0
+      ],
+      "title": "3b. Same-reference Qwen prefix cache · bounded CPU LRU",
+      "color": "#315b55",
+      "bgcolor": "#19302d"
+    },
+    {
+      "id": 7001,
+      "type": "MVAutoDirector",
+      "pos": [
+        390,
+        540
+      ],
+      "size": [
+        460,
+        460
+      ],
+      "flags": {},
+      "order": 50,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scene_plan",
+          "type": "H3_T8_MV_SCENE_PLAN",
+          "links": [
+            15
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "scene_directions_json",
+          "type": "STRING",
+          "links": [
+            16
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "global_creative_prompt",
+          "type": "STRING",
+          "links": [
+            17
+          ],
+          "slot_index": 2
+        },
+        {
+          "name": "visual_style",
+          "type": "STRING",
+          "links": [
+            18
+          ],
+          "slot_index": 3
+        },
+        {
+          "name": "report",
+          "type": "STRING",
+          "links": [
+            19
+          ],
+          "slot_index": 4
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MVAutoDirector"
+      },
+      "widgets_values": [
+        "custom",
+        0,
+        "fixed",
+        "",
+        "",
+        0,
+        "auto",
+        "",
+        "",
+        ""
+      ],
+      "widgets_values_named": {
+        "preset": "custom",
+        "seed": 0,
+        "control_after_generate": "fixed",
+        "custom_global_prompt": "",
+        "pose_scenes": "",
+        "pose_every": 0,
+        "busy_background": "auto",
+        "custom_angles_json": "",
+        "custom_light": "",
+        "custom_pose": ""
+      }
+    },
+    {
+      "id": 7002,
+      "type": "PreviewAny",
+      "pos": [
+        390,
+        920
+      ],
+      "size": [
+        440,
+        260
+      ],
+      "flags": {},
+      "order": 60,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 19
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      }
+    },
+    {
+      "id": 9001,
+      "type": "MarkdownNote",
+      "pos": [
+        -1080,
+        0
+      ],
+      "size": [
+        620,
+        1000
+      ],
+      "flags": {},
+      "order": 999,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# MV H3\n\nSong + isolated vocal + one photo → finished music video, joined and muxed.\nNo ffmpeg.\n\nOutput: `output/minimax_h3_t8_long_video/<chain_id>/assembled/*_master_audio.mp4`\n\nFull docs, model download links and the Claude Code skill:\n**github.com/oomsurvivor/comfyui-mv-autodirect**\n\n---\n\n**Vocal must be the isolated lead stem.** Backing vocals count as singing and\nbreak the timing.\n\n**Both `AudioCrop` nodes need the same `start_time` / `end_time`**, and\n`end_time` at least 1 second shorter than the shorter file. Otherwise:\n`resolves to N frames but requires M`.\n\n## Three ways to run\n\n| | |\n|---|---|\n| **Preview** | Ctrl+B on the renderer → Run → read `PreviewAny`. **No GPU, near-instant.** Change `seed` and repeat until the plan looks right. |\n| **Excerpt** | change `end_time` on **both** AudioCrops + new `chain_id` |\n| **Full song** | `0:00` → length minus 1–2 s + new `chain_id` |\n\nShort runs cost *more* per scene — the model reloads for every scene and that\nfixed cost is spread over fewer of them. Iterate with Preview, not with short\nrenders.\n\n## chain_id — the one real trap\n\nReusing a **finished** `chain_id` generates nothing and re-exports the old\nvideo in a second, with no error. Signs: no `100%|███ 6/6` bar, GPU quiet.\n\n**New look → new chain_id.**\n\n## The four fields on MV Auto Director\n\nIn the order they appear: `custom_global_prompt` (required) ·\n`custom_angles_json` · `custom_light` · `custom_pose`\n\nDescribe crowds in the **global** field only — it is not word-filtered, the\nangle library is. Lock the light to a fixed world position so cuts don't\nflicker.\n\n`busy_background`: leave on `auto`. It avoids pairing expensive moves with wide\nshots, which can take roughly ten times as long.\n\n`pose_scenes` / `pose_every` make scenes stop lip-syncing. A third is a good\nrhythm; put them at the intro, a breakdown, and after a chorus payoff.\n\n## Notes\n\n`accepted/` means the file landed, not that the frame is good. Check for a\nduplicated face or a second ball — a bad scene poisons every scene after it.\n\nClosing the **console** kills the server; closing the **browser tab** does not.\n"
+      ],
+      "widgets_values_named": {
+        "text": "# MV H3\n\nSong + isolated vocal + one photo → finished music video, joined and muxed.\nNo ffmpeg.\n\nOutput: `output/minimax_h3_t8_long_video/<chain_id>/assembled/*_master_audio.mp4`\n\nFull docs, model download links and the Claude Code skill:\n**github.com/oomsurvivor/comfyui-mv-autodirect**\n\n---\n\n**Vocal must be the isolated lead stem.** Backing vocals count as singing and\nbreak the timing.\n\n**Both `AudioCrop` nodes need the same `start_time` / `end_time`**, and\n`end_time` at least 1 second shorter than the shorter file. Otherwise:\n`resolves to N frames but requires M`.\n\n## Three ways to run\n\n| | |\n|---|---|\n| **Preview** | Ctrl+B on the renderer → Run → read `PreviewAny`. **No GPU, near-instant.** Change `seed` and repeat until the plan looks right. |\n| **Excerpt** | change `end_time` on **both** AudioCrops + new `chain_id` |\n| **Full song** | `0:00` → length minus 1–2 s + new `chain_id` |\n\nShort runs cost *more* per scene — the model reloads for every scene and that\nfixed cost is spread over fewer of them. Iterate with Preview, not with short\nrenders.\n\n## chain_id — the one real trap\n\nReusing a **finished** `chain_id` generates nothing and re-exports the old\nvideo in a second, with no error. Signs: no `100%|███ 6/6` bar, GPU quiet.\n\n**New look → new chain_id.**\n\n## The four fields on MV Auto Director\n\nIn the order they appear: `custom_global_prompt` (required) ·\n`custom_angles_json` · `custom_light` · `custom_pose`\n\nDescribe crowds in the **global** field only — it is not word-filtered, the\nangle library is. Lock the light to a fixed world position so cuts don't\nflicker.\n\n`busy_background`: leave on `auto`. It avoids pairing expensive moves with wide\nshots, which can take roughly ten times as long.\n\n`pose_scenes` / `pose_every` make scenes stop lip-syncing. A third is a good\nrhythm; put them at the intro, a breakdown, and after a chorus payoff.\n\n## Notes\n\n`accepted/` means the file landed, not that the frame is good. Check for a\nduplicated face or a second ball — a bad scene poisons every scene after it.\n\nClosing the **console** kills the server; closing the **browser tab** does not.\n"
+      },
+      "color": "#1d4d3a",
+      "bgcolor": "#102a20"
+    },
+    {
+      "id": 7050,
+      "type": "MiniMaxH3MemoryEfficientSageAttentionPatch",
+      "pos": [
+        400,
+        140
+      ],
+      "size": [
+        330,
+        30
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            21
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3MemoryEfficientSageAttentionPatch"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9002,
+      "type": "AudioCrop",
+      "pos": [
+        20,
+        1080
+      ],
+      "size": [
+        300,
+        80
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 22
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            7,
+            8
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AudioCrop"
+      },
+      "widgets_values": [
+        "0:00",
+        "2:42"
+      ]
+    },
+    {
+      "id": 9003,
+      "type": "AudioCrop",
+      "pos": [
+        420,
+        1080
+      ],
+      "size": [
+        300,
+        80
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            9,
+            10
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AudioCrop"
+      },
+      "widgets_values": [
+        "0:00",
+        "2:42"
+      ]
+    },
+    {
+      "id": 9004,
+      "type": "MarkdownNote",
+      "pos": [
+        3300,
+        0
+      ],
+      "size": [
+        560,
+        640
+      ],
+      "flags": {},
+      "order": 99,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "color": "#4a2626",
+      "bgcolor": "#281414",
+      "widgets_values": [
+        "## Multiple references\n\nUp to **9 images, 3 videos, 3 audios** — the stock renderer allows only one.\n\nA reference does nothing until the prompt names it:\n\n| Tag | Points to |\n|---|---|\n| `<Picture 1>` | `reference_image` |\n| `<Picture 2>`…`<Picture 9>` | `ref_image_2…9` |\n| `<Video 1..3>` · `<Audio 1..3>` | video / audio refs |\n\nWrite the tags in **`custom_global_prompt`**:\n\n> the man in `<Picture 1>` wearing the jacket from `<Picture 2>`\n\nThat splits face / outfit / location into separate images.\n\n**Extra refs are not part of the resume contract.** Swapping one while keeping\nthe same `chain_id` silently reuses the old scenes — the `report` output prints\na fingerprint; when it changes, change `chain_id`.\n\nMore images of the *same* person means more consistency, not more variety. Tags\nare fixed for the whole chain, so one chain is one outfit.\n\nReference video: at least 5 frames, truncated to the scene length.\n"
+      ],
+      "widgets_values_named": {
+        "text": "## Multiple references\n\nUp to **9 images, 3 videos, 3 audios** — the stock renderer allows only one.\n\nA reference does nothing until the prompt names it:\n\n| Tag | Points to |\n|---|---|\n| `<Picture 1>` | `reference_image` |\n| `<Picture 2>`…`<Picture 9>` | `ref_image_2…9` |\n| `<Video 1..3>` · `<Audio 1..3>` | video / audio refs |\n\nWrite the tags in **`custom_global_prompt`**:\n\n> the man in `<Picture 1>` wearing the jacket from `<Picture 2>`\n\nThat splits face / outfit / location into separate images.\n\n**Extra refs are not part of the resume contract.** Swapping one while keeping\nthe same `chain_id` silently reuses the old scenes — the `report` output prints\na fingerprint; when it changes, change `chain_id`.\n\nMore images of the *same* person means more consistency, not more variety. Tags\nare fixed for the whole chain, so one chain is one outfit.\n\nReference video: at least 5 frames, truncated to the scene length.\n"
+      }
+    }
+  ],
+  "links": [
+    [
+      13,
+      3,
+      0,
+      15,
+      0,
+      "CLIP"
+    ],
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "MODEL"
+    ],
+    [
+      3,
+      15,
+      0,
+      11,
+      1,
+      "CLIP"
+    ],
+    [
+      4,
+      4,
+      0,
+      11,
+      2,
+      "VAE"
+    ],
+    [
+      5,
+      5,
+      0,
+      11,
+      3,
+      "VAE"
+    ],
+    [
+      6,
+      6,
+      0,
+      11,
+      4,
+      "IMAGE"
+    ],
+    [
+      7,
+      9002,
+      0,
+      9,
+      0,
+      "AUDIO"
+    ],
+    [
+      8,
+      9002,
+      0,
+      11,
+      5,
+      "AUDIO"
+    ],
+    [
+      9,
+      9003,
+      0,
+      9,
+      1,
+      "AUDIO"
+    ],
+    [
+      10,
+      9003,
+      0,
+      11,
+      6,
+      "AUDIO"
+    ],
+    [
+      12,
+      10,
+      0,
+      11,
+      7,
+      "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN"
+    ],
+    [
+      14,
+      9,
+      0,
+      7001,
+      0,
+      "H3_T8_MV_SCENE_PLAN"
+    ],
+    [
+      15,
+      7001,
+      0,
+      10,
+      0,
+      "H3_T8_MV_SCENE_PLAN"
+    ],
+    [
+      16,
+      7001,
+      1,
+      10,
+      1,
+      "STRING"
+    ],
+    [
+      17,
+      7001,
+      2,
+      10,
+      2,
+      "STRING"
+    ],
+    [
+      18,
+      7001,
+      3,
+      10,
+      3,
+      "STRING"
+    ],
+    [
+      19,
+      7001,
+      4,
+      7002,
+      0,
+      "*"
+    ],
+    [
+      20,
+      2,
+      0,
+      7050,
+      0,
+      "MODEL"
+    ],
+    [
+      21,
+      7050,
+      0,
+      11,
+      0,
+      "MODEL"
+    ],
+    [
+      22,
+      7,
+      0,
+      9002,
+      0,
+      "AUDIO"
+    ],
+    [
+      23,
+      8,
+      0,
+      9003,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "Local H3 models + reference + two local audio tracks",
+      "bounding": [
+        -40,
+        -70,
+        900,
+        1210
+      ],
+      "color": "#3f789e",
+      "font_size": 26,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "V2 isolated-vocal planning + official Ref2VA compiler",
+      "bounding": [
+        890,
+        -70,
+        800,
+        1390
+      ],
+      "color": "#397382",
+      "font_size": 26,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "Strictly serial local H3 Vocal Lock generation",
+      "bounding": [
+        1700,
+        -70,
+        860,
+        1090
+      ],
+      "color": "#704c91",
+      "font_size": 26,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.52,
+      "offset": [
+        70,
+        130
+      ]
+    },
+    "ue_links": [],
+    "t8_mv_state": "all_local_mv_vocal_lock_v3_visual_director"
+  },
+  "version": 0.4
+}

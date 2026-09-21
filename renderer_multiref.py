@@ -31,11 +31,18 @@ def _sampler_options():
     in the stock lists. Building the menu from the stock lists makes every saved
     workflow fail with 'Value not in list'.
 
-    Resolved lazily, because T8 may not have finished loading when this pack does.
+    Found by WHAT IT HAS, not by module name - ComfyUI renames custom-node
+    modules between versions. Resolved lazily, because T8 may not have
+    finished loading when this pack does.
     """
-    for name, mod in list(sys.modules.items()):
-        if name.endswith("h3_t8.sampling") and hasattr(mod, "SAMPLER_OPTIONS"):
-            return list(mod.SAMPLER_OPTIONS), list(mod.SCHEDULER_OPTIONS)
+    for mod in list(sys.modules.values()):
+        if mod is None:
+            continue
+        try:
+            if hasattr(mod, "SAMPLER_OPTIONS") and hasattr(mod, "SCHEDULER_OPTIONS")                     and hasattr(mod, "DEFAULT_SAMPLER_NAME"):
+                return list(mod.SAMPLER_OPTIONS), list(mod.SCHEDULER_OPTIONS)
+        except Exception:
+            continue
     try:
         import comfy.samplers as cs
         return (["dual_clock_euler"] + [n for n in cs.SAMPLER_NAMES if n != "dual_clock_euler"],
@@ -45,20 +52,59 @@ def _sampler_options():
         return None, None
 
 
-def _t8_module():
-    """Find T8's mv_lipsync_advanced module in sys.modules.
+RENDER_FN = "run_local_mv_vocal_lock_visual_in_node_loop"
 
-    It cannot be imported by name because the pack folder contains a hyphen.
-    ComfyUI has already loaded it, so just look it up.
+
+def _t8_module():
+    """Find T8's mv_lipsync_advanced module among the already-loaded modules.
+
+    Identify it by WHAT IT HAS, not by its name. The pack folder contains
+    hyphens so it cannot be imported by name, and ComfyUI has changed how it
+    names custom-node modules more than once - matching on the name broke on
+    ComfyUI 0.36. The pair of attributes below is unique to this module.
     """
-    for name, mod in list(sys.modules.items()):
-        if name.endswith("h3_t8.mv_lipsync_advanced") and hasattr(
-            mod, "run_local_mv_vocal_lock_visual_in_node_loop"
-        ):
+    loose = None
+    for mod in list(sys.modules.values()):
+        if mod is None:
+            continue
+        try:
+            fn = getattr(mod, RENDER_FN, None)
+            if fn is None or not hasattr(mod, "build_conditioning"):
+                continue
+            # Prefer the module that DEFINES the render function. Other modules
+            # in the pack merely import it, and wrapping build_conditioning
+            # there would have no effect on the one the renderer actually reads.
+            if getattr(fn, "__module__", None) == getattr(mod, "__name__", None):
+                return mod
+            loose = loose or mod
+        except Exception:
+            continue
+    if loose is not None:
+        return loose
+
+    # Fallback: load it straight off disk if ComfyUI has not imported it.
+    import importlib.util
+    import os
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for folder in sorted(os.listdir(here)):
+        f = os.path.join(here, folder, "h3_t8", "mv_lipsync_advanced.py")
+        if not os.path.isfile(f):
+            continue
+        spec = importlib.util.spec_from_file_location(
+            "t8_mv_lipsync_advanced_%s" % abs(hash(f)), f)
+        mod = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(mod)
+        except Exception:
+            continue
+        if hasattr(mod, RENDER_FN):
+            sys.modules[spec.name] = mod
             return mod
+
     raise RuntimeError(
-        "MV Renderer Multi-Ref: could not find the mv_lipsync_advanced module of "
-        "comfyui-minimax-h3-audio-T8. Is that node pack installed and loaded?")
+        "MV Renderer Multi-Ref: could not find comfyui-minimax-h3-audio-T8. "
+        "No loaded module exposes %s. Is that node pack installed, and did it "
+        "import without errors? Check the ComfyUI startup log." % RENDER_FN)
 
 
 def _is_ref_image_dict(obj):

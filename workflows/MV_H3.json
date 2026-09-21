@@ -777,13 +777,27 @@
       "widgets_values": [
         "custom",
         0,
+        "fixed",
         "",
         "",
-        3,
+        0,
         "auto",
         "",
+        "",
         ""
-      ]
+      ],
+      "widgets_values_named": {
+        "preset": "custom",
+        "seed": 0,
+        "control_after_generate": "fixed",
+        "custom_global_prompt": "",
+        "pose_scenes": "",
+        "pose_every": 0,
+        "busy_background": "auto",
+        "custom_angles_json": "",
+        "custom_light": "",
+        "custom_pose": ""
+      }
     },
     {
       "id": 7002,

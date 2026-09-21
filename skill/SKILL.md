@@ -277,6 +277,14 @@ sentence that locks the count.
 
 ## Small traps
 
+- ComfyUI silently inserts a hidden `control_after_generate` widget after any
+  `INT` field named exactly `seed`, and it occupies a slot in `widgets_values`.
+  Hand-editing a workflow without leaving room for it shifts every later value
+  by one and fails with `The value auto for ... pose_every couldn't be converted
+  to INT`. `MV Auto Director` needs ten values:
+  `["custom", 0, "fixed", "", "", 0, "auto", "", "", ""]`. `MV Renderer
+  Multi-Ref` is unaffected because its field is called `base_seed`.
+
 - Errors from the director only appear in `/history/<prompt_id>`; the output
   folder is simply empty, which reads like an ffmpeg failure. Always check
   `status_str` after submitting.

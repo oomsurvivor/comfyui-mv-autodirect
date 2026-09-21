@@ -217,7 +217,7 @@
       "type": "LoadAudio",
       "pos": [
         0,
-        930
+        1320
       ],
       "size": [
         360,
@@ -251,7 +251,7 @@
       "type": "LoadAudio",
       "pos": [
         400,
-        930
+        1320
       ],
       "size": [
         430,
@@ -659,8 +659,8 @@
       "id": 15,
       "type": "MiniMaxH3QwenReferencePrefixCacheT8Advanced",
       "pos": [
-        430,
-        150
+        400,
+        200
       ],
       "size": [
         430,
@@ -804,7 +804,7 @@
       "type": "PreviewAny",
       "pos": [
         390,
-        920
+        1030
       ],
       "size": [
         440,
@@ -892,7 +892,7 @@
       "type": "AudioCrop",
       "pos": [
         20,
-        1080
+        1470
       ],
       "size": [
         300,
@@ -932,7 +932,7 @@
       "type": "AudioCrop",
       "pos": [
         420,
-        1080
+        1470
       ],
       "size": [
         300,
@@ -997,8 +997,8 @@
       "id": 9005,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        -1200
+        -3295,
+        -1795
       ],
       "flags": {},
       "order": 0,
@@ -1034,8 +1034,8 @@
       "id": 9006,
       "type": "SetNode",
       "pos": [
-        -2120,
-        -1190
+        -3295,
+        -1460
       ],
       "size": [
         210,
@@ -1071,12 +1071,12 @@
       "id": 9007,
       "type": "GetNode",
       "pos": [
-        1380,
-        -1190
+        1740,
+        -1120
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1104,8 +1104,8 @@
       "id": 9008,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        -820
+        -2915,
+        -1795
       ],
       "flags": {},
       "order": 0,
@@ -1141,8 +1141,8 @@
       "id": 9009,
       "type": "SetNode",
       "pos": [
-        -2120,
-        -810
+        -2915,
+        -1460
       ],
       "size": [
         210,
@@ -1178,12 +1178,12 @@
       "id": 9010,
       "type": "GetNode",
       "pos": [
-        1380,
-        -810
+        1740,
+        -1064
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1211,8 +1211,8 @@
       "id": 9011,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        -440
+        -2535,
+        -1795
       ],
       "flags": {},
       "order": 0,
@@ -1248,8 +1248,8 @@
       "id": 9012,
       "type": "SetNode",
       "pos": [
-        -2120,
-        -430
+        -2535,
+        -1460
       ],
       "size": [
         210,
@@ -1285,12 +1285,12 @@
       "id": 9013,
       "type": "GetNode",
       "pos": [
-        1380,
-        -430
+        1740,
+        -1008
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1318,8 +1318,8 @@
       "id": 9014,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        -60
+        -2155,
+        -1795
       ],
       "flags": {},
       "order": 0,
@@ -1355,8 +1355,8 @@
       "id": 9015,
       "type": "SetNode",
       "pos": [
-        -2120,
-        -50
+        -2155,
+        -1460
       ],
       "size": [
         210,
@@ -1392,12 +1392,12 @@
       "id": 9016,
       "type": "GetNode",
       "pos": [
-        1380,
-        -50
+        1740,
+        -952
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1425,8 +1425,8 @@
       "id": 9017,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        320
+        -3295,
+        -1285
       ],
       "flags": {},
       "order": 0,
@@ -1462,8 +1462,8 @@
       "id": 9018,
       "type": "SetNode",
       "pos": [
-        -2120,
-        330
+        -3295,
+        -950
       ],
       "size": [
         210,
@@ -1499,12 +1499,12 @@
       "id": 9019,
       "type": "GetNode",
       "pos": [
-        1380,
-        330
+        1740,
+        -896
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1532,8 +1532,8 @@
       "id": 9020,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        700
+        -2915,
+        -1285
       ],
       "flags": {},
       "order": 0,
@@ -1569,8 +1569,8 @@
       "id": 9021,
       "type": "SetNode",
       "pos": [
-        -2120,
-        710
+        -2915,
+        -950
       ],
       "size": [
         210,
@@ -1606,12 +1606,12 @@
       "id": 9022,
       "type": "GetNode",
       "pos": [
-        1380,
-        710
+        1740,
+        -840
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1639,8 +1639,8 @@
       "id": 9023,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        1080
+        -2535,
+        -1285
       ],
       "flags": {},
       "order": 0,
@@ -1676,8 +1676,8 @@
       "id": 9024,
       "type": "SetNode",
       "pos": [
-        -2120,
-        1090
+        -2535,
+        -950
       ],
       "size": [
         210,
@@ -1713,12 +1713,12 @@
       "id": 9025,
       "type": "GetNode",
       "pos": [
-        1380,
-        1090
+        1740,
+        -784
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1746,8 +1746,8 @@
       "id": 9026,
       "type": "LoadImage",
       "pos": [
-        -2500,
-        1460
+        -2155,
+        -1285
       ],
       "flags": {},
       "order": 0,
@@ -1783,8 +1783,8 @@
       "id": 9027,
       "type": "SetNode",
       "pos": [
-        -2120,
-        1470
+        -2155,
+        -950
       ],
       "size": [
         210,
@@ -1820,12 +1820,12 @@
       "id": 9028,
       "type": "GetNode",
       "pos": [
-        1380,
-        1470
+        1740,
+        -728
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1853,8 +1853,8 @@
       "id": 9029,
       "type": "VHS_LoadVideo",
       "pos": [
-        -2500,
-        1840
+        -3295,
+        -775
       ],
       "flags": {},
       "order": 0,
@@ -1906,8 +1906,8 @@
       "id": 9030,
       "type": "SetNode",
       "pos": [
-        -2120,
-        1850
+        -3295,
+        -410
       ],
       "size": [
         210,
@@ -1943,12 +1943,12 @@
       "id": 9031,
       "type": "GetNode",
       "pos": [
-        1380,
-        1850
+        1740,
+        -672
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -1976,8 +1976,8 @@
       "id": 9032,
       "type": "LoadAudio",
       "pos": [
-        -2500,
-        2220
+        -3295,
+        -330
       ],
       "flags": {},
       "order": 0,
@@ -2009,8 +2009,8 @@
       "id": 9033,
       "type": "SetNode",
       "pos": [
-        -2120,
-        2230
+        -3295,
+        -200
       ],
       "size": [
         210,
@@ -2046,12 +2046,12 @@
       "id": 9034,
       "type": "GetNode",
       "pos": [
-        1380,
-        2230
+        1740,
+        -616
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2079,8 +2079,8 @@
       "id": 9035,
       "type": "VHS_LoadVideo",
       "pos": [
-        -2500,
-        2390
+        -2915,
+        -775
       ],
       "flags": {},
       "order": 0,
@@ -2132,8 +2132,8 @@
       "id": 9036,
       "type": "SetNode",
       "pos": [
-        -2120,
-        2400
+        -2915,
+        -410
       ],
       "size": [
         210,
@@ -2169,12 +2169,12 @@
       "id": 9037,
       "type": "GetNode",
       "pos": [
-        1380,
-        2400
+        1740,
+        -560
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2202,8 +2202,8 @@
       "id": 9038,
       "type": "LoadAudio",
       "pos": [
-        -2500,
-        2770
+        -2915,
+        -330
       ],
       "flags": {},
       "order": 0,
@@ -2235,8 +2235,8 @@
       "id": 9039,
       "type": "SetNode",
       "pos": [
-        -2120,
-        2780
+        -2915,
+        -200
       ],
       "size": [
         210,
@@ -2272,12 +2272,12 @@
       "id": 9040,
       "type": "GetNode",
       "pos": [
-        1380,
-        2780
+        1740,
+        -504
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2305,8 +2305,8 @@
       "id": 9041,
       "type": "VHS_LoadVideo",
       "pos": [
-        -2500,
-        2940
+        -2535,
+        -775
       ],
       "flags": {},
       "order": 0,
@@ -2358,8 +2358,8 @@
       "id": 9042,
       "type": "SetNode",
       "pos": [
-        -2120,
-        2950
+        -2535,
+        -410
       ],
       "size": [
         210,
@@ -2395,12 +2395,12 @@
       "id": 9043,
       "type": "GetNode",
       "pos": [
-        1380,
-        2950
+        1740,
+        -448
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2428,8 +2428,8 @@
       "id": 9044,
       "type": "LoadAudio",
       "pos": [
-        -2500,
-        3320
+        -2535,
+        -330
       ],
       "flags": {},
       "order": 0,
@@ -2461,8 +2461,8 @@
       "id": 9045,
       "type": "SetNode",
       "pos": [
-        -2120,
-        3330
+        -2535,
+        -200
       ],
       "size": [
         210,
@@ -2498,12 +2498,12 @@
       "id": 9046,
       "type": "GetNode",
       "pos": [
-        1380,
-        3330
+        1740,
+        -392
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2531,8 +2531,8 @@
       "id": 9047,
       "type": "LoadAudio",
       "pos": [
-        -2500,
-        3490
+        -2155,
+        -775
       ],
       "flags": {},
       "order": 0,
@@ -2564,8 +2564,8 @@
       "id": 9048,
       "type": "SetNode",
       "pos": [
-        -2120,
-        3500
+        -2155,
+        -640
       ],
       "size": [
         210,
@@ -2601,12 +2601,12 @@
       "id": 9049,
       "type": "GetNode",
       "pos": [
-        1380,
-        3500
+        1740,
+        -336
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2634,8 +2634,8 @@
       "id": 9050,
       "type": "LoadAudio",
       "pos": [
-        -2500,
-        3660
+        -2155,
+        -475
       ],
       "flags": {},
       "order": 0,
@@ -2667,8 +2667,8 @@
       "id": 9051,
       "type": "SetNode",
       "pos": [
-        -2120,
-        3670
+        -2155,
+        -340
       ],
       "size": [
         210,
@@ -2704,12 +2704,12 @@
       "id": 9052,
       "type": "GetNode",
       "pos": [
-        1380,
-        3670
+        1740,
+        -280
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -2737,8 +2737,8 @@
       "id": 9053,
       "type": "LoadAudio",
       "pos": [
-        -2500,
-        3830
+        -2155,
+        -175
       ],
       "flags": {},
       "order": 0,
@@ -2770,8 +2770,8 @@
       "id": 9054,
       "type": "SetNode",
       "pos": [
-        -2120,
-        3840
+        -2155,
+        -40
       ],
       "size": [
         210,
@@ -2807,12 +2807,12 @@
       "id": 9055,
       "type": "GetNode",
       "pos": [
-        1380,
-        3840
+        1740,
+        -224
       ],
       "size": [
-        210,
-        58
+        230,
+        46
       ],
       "flags": {},
       "order": 0,
@@ -3281,43 +3281,290 @@
   ],
   "groups": [
     {
-      "id": 1,
-      "title": "Local H3 models + reference + two local audio tracks",
+      "id": 4,
+      "title": "Ref Image 2",
       "bounding": [
-        -40,
-        -70,
-        900,
-        1210
+        -3320,
+        -1850,
+        350,
+        470
       ],
       "color": "#3f789e",
-      "font_size": 26,
+      "font_size": 24,
       "flags": {}
     },
     {
-      "id": 2,
-      "title": "V2 isolated-vocal planning + official Ref2VA compiler",
+      "id": 5,
+      "title": "Ref Image 3",
       "bounding": [
-        890,
-        -70,
-        800,
-        1390
+        -2940,
+        -1850,
+        350,
+        470
       ],
-      "color": "#397382",
-      "font_size": 26,
+      "color": "#3f789e",
+      "font_size": 24,
       "flags": {}
     },
     {
-      "id": 3,
-      "title": "Strictly serial local H3 Vocal Lock generation",
+      "id": 6,
+      "title": "Ref Image 4",
+      "bounding": [
+        -2560,
+        -1850,
+        350,
+        470
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 7,
+      "title": "Ref Image 5",
+      "bounding": [
+        -2180,
+        -1850,
+        350,
+        470
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 8,
+      "title": "Ref Image 6",
+      "bounding": [
+        -3320,
+        -1340,
+        350,
+        470
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 9,
+      "title": "Ref Image 7",
+      "bounding": [
+        -2940,
+        -1340,
+        350,
+        470
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 10,
+      "title": "Ref Image 8",
+      "bounding": [
+        -2560,
+        -1340,
+        350,
+        470
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 11,
+      "title": "Ref Image 9",
+      "bounding": [
+        -2180,
+        -1340,
+        350,
+        470
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 12,
+      "title": "Ref Video 1",
+      "bounding": [
+        -3320,
+        -830,
+        350,
+        700
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 13,
+      "title": "Ref Video 2",
+      "bounding": [
+        -2940,
+        -830,
+        350,
+        700
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 14,
+      "title": "Ref Video 3",
+      "bounding": [
+        -2560,
+        -830,
+        350,
+        700
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 15,
+      "title": "Ref Audio 1",
+      "bounding": [
+        -2180,
+        -830,
+        350,
+        260
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 16,
+      "title": "Ref Audio 2",
+      "bounding": [
+        -2180,
+        -530,
+        350,
+        260
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 17,
+      "title": "Ref Audio 3",
+      "bounding": [
+        -2180,
+        -230,
+        350,
+        260
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 18,
+      "title": "REFERENCE INPUTS  -  bypassed, Ctrl+B to use one",
+      "bounding": [
+        -3360,
+        -1940,
+        1570,
+        1870
+      ],
+      "color": "#b06634",
+      "font_size": 40,
+      "flags": {}
+    },
+    {
+      "id": 19,
+      "title": "Audio",
+      "bounding": [
+        -30,
+        1250,
+        800,
+        380
+      ],
+      "color": "#2e6b4f",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 20,
+      "title": "Model + LoRA",
+      "bounding": [
+        -30,
+        -60,
+        900,
+        480
+      ],
+      "color": "#b06634",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 21,
+      "title": "Planning",
+      "bounding": [
+        880,
+        -60,
+        790,
+        530
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 22,
+      "title": "Directing",
+      "bounding": [
+        370,
+        480,
+        500,
+        760
+      ],
+      "color": "#5d4d79",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 23,
+      "title": "Prompt build",
+      "bounding": [
+        880,
+        480,
+        790,
+        800
+      ],
+      "color": "#5d4d79",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 24,
+      "title": "Render",
       "bounding": [
         1700,
-        -70,
+        -1180,
         860,
-        1090
+        2180
       ],
-      "color": "#704c91",
-      "font_size": 26,
+      "color": "#2e6b4f",
+      "font_size": 24,
       "flags": {}
+    },
+    {
+      "id": 25,
+      "title": "Character image",
+      "flags": {},
+      "bounding": [
+        -30,
+        500,
+        380,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24
     }
   ],
   "config": {},

@@ -207,6 +207,7 @@ def _load_custom_angles(text):
 CROWD_WORDS = re.compile(
     r"\b(?:people|persons|players|crowd|crowds|passers-?by|bystanders?|onlookers?|"
     r"audience|spectators?|pedestrians?|dancers?|fans|teammates?|friends|"
+    r"passengers?|commuters?|shoppers?|diners?|customers?|guests?|students?|"
     r"everyone|others|group of|a few (?:men|women|kids|guys))\b", re.IGNORECASE)
 
 # Negations: may contain a crowd word but actually mean nobody is there.

@@ -295,6 +295,37 @@ hi-hat all clearly inside the frame"* - otherwise it hides them outside it.
 Percussion is far easier than a fretboard or keys: big motion, few fingers, and
 an impact that reads clearly.
 
+### Instrument by instrument - measured 2026-09-22
+
+Five tests, each a single unbroken 10-second scene, judged by a musician:
+
+| Instrument | Result | Note |
+|---|---|---|
+| **Percussion** (spanner on a frame) | works | big motion, few fingers, easiest |
+| **Drum kit** | works | lands on the beat when driven by the full mix |
+| **Bamboo flute** | **works, surprisingly well** | breath and phrasing convincing; whether the notes are correct could not be judged |
+| **Piano** | works | but do not make it hit on the beat like a drum |
+| **Guitar** | **wrong** | it plucked with the **thumb**; it should use the other fingers |
+
+**Guitar - name the fingers.** The model defaults to plucking with the thumb.
+Spell it out in `perf`: *"plucking with her index, middle and ring fingers, the
+thumb resting on the bass strings only"*. Leave it out and it gets it wrong.
+
+**Piano - do not force the beat.** Landing on the beat is the goal for drums,
+not for piano. Write it as **broken chords**: the fingers press the notes of
+each chord one after another from the lowest upward, each finger lifting as the
+next falls, the left hand holding a low note that rings, the foot on the
+sustain pedal. Never write "on every beat".
+
+**Wind instruments - lock the mouth.** A flute keeps the lips on the mouthpiece
+the whole time, and this model exists to move mouths in time with audio. The
+line below is mandatory, and with it the result is good: *"Her lips stay pressed
+to the mouthpiece and blow a steady stream of air the whole time; her mouth
+never opens into any singing or speaking shape."*
+
+Easiest to hardest: **percussion → wind → keys → strings.** Strings are worst
+because the fingers have to meet the right string in the right shape.
+
 ### Forcing one long scene
 
 `ScenePlanner` cuts at 2.5-3.5 s by default, too short to judge whether timing

@@ -250,6 +250,62 @@ makes him watch the camera while throwing.
 
 ---
 
+## Playing an instrument in time
+
+**Measured 2026-09-21. No documentation found for this anywhere.**
+
+What the model hears is decided by `_mv_audio_sources()`
+(`mv_lipsync_advanced.py:1263`):
+
+```python
+return {
+    "conditioning": vocal_lock_audio,   # what the model HEARS
+    "final_delivery": full_song,        # only muxed on at the end
+}
+```
+
+Connect the vocal stem and the model hears **vocals only** - no drums, no bass.
+It cannot play in time because it is never told where the beat is.
+
+**The unlock:** feed the **full mix** into the renderer's `vocal_lock_audio`
+field. The field is required so it cannot be empty, but nothing says what has to
+go in it. Leave the real vocal stem on `ScenePlanner` so the scene splits stay
+the same.
+
+Tested twice, **both worked**:
+
+| Test | Length | Result |
+|---|---|---|
+| Striking a bike frame with a spanner | 3 s | works |
+| Playing a drum kit | 10 s, one unbroken scene | works |
+
+The control runs, driven by the vocal stem, did not.
+
+### Write the pattern, not the activity
+
+Do not write "plays the drums". Describe the **pattern as physical motion**:
+
+> *right stick striking the hi-hat on every beat and the left stick hitting the
+> snare on every second beat, both arms rising and falling in a regular cycle,
+> his right foot working the bass pedal*
+
+And force the hands into frame: *"both hands, both sticks, the snare and the
+hi-hat all clearly inside the frame"* - otherwise it hides them outside it.
+
+Percussion is far easier than a fretboard or keys: big motion, few fingers, and
+an impact that reads clearly.
+
+### Forcing one long scene
+
+`ScenePlanner` cuts at 2.5-3.5 s by default, too short to judge whether timing
+drifts. Set `min/target/max_scene_seconds` to about 10 and you get one unbroken
+scene.
+
+There is a second benefit: 10 s is 240 frames, **inside** H3's training range of
+124-362 frames. Scenes of 2.5-3.5 s sit below it.
+
+---
+
 ## Crowds
 
 `global_creative_prompt` is **not** word-filtered; `scene_directions_json` is.

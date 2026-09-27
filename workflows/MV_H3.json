@@ -1,8 +1,8 @@
 {
   "id": "796b561b-8b75-4dc4-9ca0-da4d531865ae",
   "revision": 0,
-  "last_node_id": 9056,
-  "last_link_id": 58,
+  "last_node_id": 9062,
+  "last_link_id": 66,
   "nodes": [
     {
       "id": 1,
@@ -207,7 +207,7 @@
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
-        "chon anh nhan vat, MOT mat",
+        "pick the singer image, ONE face",
         "image"
       ],
       "title": "6. Replace with performer reference image"
@@ -240,7 +240,7 @@
         "Node name for S&R": "LoadAudio"
       },
       "widgets_values": [
-        "chon ban mix DAY DU",
+        "pick the FULL mix",
         null,
         null
       ],
@@ -274,7 +274,7 @@
         "Node name for S&R": "LoadAudio"
       },
       "widgets_values": [
-        "chon LEAD VOCAL da tach",
+        "pick the separated LEAD vocal",
         null,
         null
       ],
@@ -401,7 +401,8 @@
           "name": "mv_vocal_lock_prompt_plan",
           "type": "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",
           "links": [
-            12
+            12,
+            65
           ]
         },
         {
@@ -598,13 +599,37 @@
           "type": "AUDIO",
           "link": 57,
           "shape": 7
+        },
+        {
+          "name": "chain_id",
+          "type": "STRING",
+          "link": 63,
+          "widget": {
+            "name": "chain_id"
+          }
+        },
+        {
+          "name": "free_scenes",
+          "type": "STRING",
+          "link": 64,
+          "shape": 7
+        },
+        {
+          "name": "base_seed",
+          "type": "INT",
+          "link": 66,
+          "widget": {
+            "name": "base_seed"
+          }
         }
       ],
       "outputs": [
         {
           "name": "video_path",
           "type": "STRING",
-          "links": [],
+          "links": [
+            60
+          ],
           "slot_index": 0
         },
         {
@@ -636,7 +661,7 @@
         "Node name for S&R": "MVRendererMultiRef"
       },
       "widgets_values": [
-        "doi_ten_nay_moi_lan_chay",
+        "mv",
         1344,
         768,
         424242,
@@ -769,6 +794,14 @@
             19
           ],
           "slot_index": 4
+        },
+        {
+          "name": "free_scenes",
+          "type": "STRING",
+          "links": [
+            64
+          ],
+          "slot_index": 5
         }
       ],
       "properties": {
@@ -784,19 +817,23 @@
         "auto",
         "",
         "",
-        ""
+        "",
+        "",
+        "varied"
       ],
       "widgets_values_named": {
         "preset": "custom",
         "seed": 0,
         "control_after_generate": "fixed",
-        "custom_global_prompt": "",
+        "custom_global_prompt": "The lead performer from <Picture 1> stands alone in the middle of a wide stone-paved street closed to traffic, early on a bright morning, the cobbled paving still damp and shining, shuttered shopfronts and glass frontages running away on both sides, low sun coming straight down the length of the street and throwing very long shadows across the stones, and sings in sharp focus. The blue-grey supercar from <Picture 3> - the same body, the same paint, the same wheels as in <Picture 3> - its number plate blank and its bodywork carrying no writing, badges or sponsor markings of any kind stands parked across the middle of the paving behind him where no car is ever meant to be. He is the only person on the street; nobody else is present, no driver is visible in the car, and nobody walks past at any moment.",
         "pose_scenes": "",
         "pose_every": 0,
         "busy_background": "auto",
-        "custom_angles_json": "",
-        "custom_light": "",
-        "custom_pose": ""
+        "custom_angles_json": "[\n {\n  \"replace\": true\n },\n {\n  \"move\": \"STATIC\",\n  \"size\": \"MS\",\n  \"energy\": \"lo\",\n  \"motion\": \"static\",\n  \"cam\": \"47 degree diagonal field of view, standard normal lens character, camera 6 meters away at chest height, locked off on a tripod. He stands on the cobbles with the parked car and the shuttered frontages readable behind him, framed from the knees up with clear empty space above his head; his face is small in frame, not a close-up.\",\n  \"perf\": \"Standing loose with his hands at his sides, singing quietly, the chest visibly carrying the breath. He looks down and slightly to one side at his own long shadow stretching forward across the stones, lifting his eyes along the street at the end of the phrase.\",\n  \"emo\": \"inward, holding something back\"\n },\n {\n  \"move\": \"STATIC\",\n  \"size\": \"MCU\",\n  \"energy\": \"lo\",\n  \"motion\": \"static\",\n  \"cam\": \"29 degree diagonal field of view, short telephoto lens character, camera 6 meters away at chest height, locked off. Head and chest fill the middle of the frame with the street falling away behind him, the row of frontages compressed into soft stacked shapes, only the subject sharp.\",\n  \"perf\": \"Weight settled on one hip, shoulders low and loose, singing without pushing. His face is held side-on, turned a full ninety degrees to his right, the lips and jaw reading clearly in outline against the bright end of the street. Eyes track something slow and distant, blink rate low.\",\n  \"emo\": \"quiet, worn, honest\"\n },\n {\n  \"move\": \"GENERAL\",\n  \"size\": \"MS\",\n  \"energy\": \"lo\",\n  \"motion\": \"slow\",\n  \"cam\": \"47 degree diagonal field of view, standard normal lens character, camera 5 meters away at chest height, drifting a few centimetres sideways on a slow dolly. Natural human-eye perspective, no distortion, the parked car and the paving joints readable behind him, comfortable depth of field.\",\n  \"perf\": \"Standing loose with hands at his sides, singing at conversational strength, the chest visibly carrying the breath. He sings straight into the lens, eyes holding it through the whole line, head turning only slightly as the camera drifts. Micro-saccades keep the gaze alive.\",\n  \"emo\": \"direct, unguarded\"\n },\n {\n  \"move\": \"STATIC\",\n  \"size\": \"WS\",\n  \"energy\": \"lo\",\n  \"motion\": \"static\",\n  \"cam\": \"84 degree diagonal field of view, classic wide lens character, camera 7 meters away at hip height, locked off. Full body in frame with empty space above his head and the cobbles visible beneath his feet; his face is small in frame, not a close-up. The paving joints and the lines of the frontages stay rectilinear, the street running away to both frame edges.\",\n  \"perf\": \"Small against the long empty street, standing still with his weight on the whole foot, singing without moving his feet. He looks down and slightly to one side at the stones a few paces ahead, lifting his eyes to the far end of the street on the strongest beat.\",\n  \"emo\": \"alone in a large place\"\n },\n {\n  \"move\": \"DOLLY OUT\",\n  \"size\": \"WS\",\n  \"energy\": \"mid\",\n  \"motion\": \"slow\",\n  \"cam\": \"84 degree diagonal field of view, classic wide lens character, camera travelling slowly backward from 4 to 7 meters at hip height. Full body in frame with headroom above and the cobbles below his feet; his face is small in frame, not a close-up. The street opens out to both frame edges, straight lines staying rectilinear.\",\n  \"perf\": \"Walking two slow steps forward as the camera retreats, keeping the same distance, singing without pushing. His head is turned about forty-five degrees to his right, the gaze travelling along the row of shuttered fronts beside him.\",\n  \"emo\": \"pressure building, held down\"\n },\n {\n  \"move\": \"HANDHELD\",\n  \"size\": \"MCU\",\n  \"energy\": \"mid\",\n  \"motion\": \"slow\",\n  \"cam\": \"29 degree diagonal field of view, short telephoto lens character, camera 5 meters away at chest height, shoulder-mounted with operator breath, micro-settling and small organic corrections. Subject sharp, the paving and the bright far end of the street dissolving behind him.\",\n  \"perf\": \"Rocking very slightly with the beat, one shoulder leading, singing with the whole chest. He looks down and slightly to one side, eyes lowered, lifting them into the lens only at the end of the phrase and holding it for a beat. Catchlights warm from the low sun.\",\n  \"emo\": \"working up to something\"\n },\n {\n  \"move\": \"ARC LEFT\",\n  \"size\": \"MS\",\n  \"energy\": \"mid\",\n  \"motion\": \"slow\",\n  \"cam\": \"47 degree diagonal field of view, standard normal lens character, camera 4 meters away at chest height, travelling slowly on a curved path to the left around him through about a quarter turn, decelerating to a stop. The parked car, the paving and the shopfront line slide across the background with real parallax.\",\n  \"perf\": \"Turning on the spot just enough to stay open to the moving camera, feet planted, singing continuously through the move. His face stays side-on, turned a full ninety degrees to his left, lips and jaw clear in outline. The eyes stay out along the street, reaching the new direction a beat before the head follows.\",\n  \"emo\": \"restless, circling a thought\"\n },\n {\n  \"move\": \"TILT DOWN\",\n  \"size\": \"WS\",\n  \"energy\": \"mid\",\n  \"motion\": \"slow\",\n  \"cam\": \"84 degree diagonal field of view, classic wide lens character, camera 6 meters away, starting tipped up at the bright sky between the buildings and tilting slowly down to settle on him. Full body in frame with the cobbles beneath his feet and his long shadow running toward the camera; his face is small in frame, not a close-up.\",\n  \"perf\": \"Already singing as the frame arrives on him, standing with his weight on the back foot, chin level. He looks off along the street to his left, following the line of frontages, and does not turn as the camera settles.\",\n  \"emo\": \"waking up to the day\"\n },\n {\n  \"move\": \"HANDHELD\",\n  \"size\": \"CU\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"18 degree diagonal field of view, telephoto lens character, camera 6 meters away at eye level, shoulder-mounted with visible operator weight and sharp organic corrections. Tight on the face, background crushed flat into a pale wash of sunlit stone and glass, only the eyes and mouth sharp.\",\n  \"perf\": \"Driving the line hard, head and shoulders punching the beat, breath sharp between phrases. His head is turned a full ninety degrees to his right, his face seen side-on, the jaw and lips reading clearly in outline as the words land. Eyes narrow against the low sun, fixed far down the street.\",\n  \"emo\": \"pushing, close to breaking\"\n },\n {\n  \"move\": \"DOLLY IN\",\n  \"size\": \"CU\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"18 degree diagonal field of view, telephoto lens character, camera travelling forward from 7 to 5 meters at eye level, braking hard before the final beat. Background crushed into a flat pale smear of stone and daylight, only the face sharp, the frame tightening fast.\",\n  \"perf\": \"Hitting the line at full strength, jaw working hard, breath sharp between phrases. His head is turned about forty-five degrees to his left, eyes fixed on something far past the edge of the frame, never coming round to the camera.\",\n  \"emo\": \"cornered, pushing through\"\n },\n {\n  \"move\": \"HANDHELD\",\n  \"size\": \"MCU\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"29 degree diagonal field of view, short telephoto lens character, camera 4 meters away at chest height, shoulder-mounted, tracking his movement with real operator mass and late corrections. Subject sharp against a dissolving background of sunlit paving.\",\n  \"perf\": \"Stepping in and out of the frame edge as he moves with the beat, arms loose and swinging, singing at full strength. He sings straight into the lens, holding it through the movement, the head and chin turning to follow the camera wherever it sits. Blink rate high, catchlights hot.\",\n  \"emo\": \"open, spending everything\"\n },\n {\n  \"move\": \"ARC RIGHT\",\n  \"size\": \"MS\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"47 degree diagonal field of view, standard normal lens character, camera 3 meters away at chest height, travelling fast on a curved path to the right around him, the frontages and the parked car sweeping past with strong parallax, braking hard before the final beat.\",\n  \"perf\": \"Whole body driving the beat, feet planted wide on the cobbles, torso rotating to stay open as the camera sweeps. His head is turned about forty-five degrees to his left, eyes tracking something moving past the edge of the frame, the gaze arriving before the head. Singing continuously, no pause on the brake.\",\n  \"emo\": \"charged, defiant\"\n },\n {\n  \"move\": \"GENERAL\",\n  \"size\": \"WS\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"84 degree diagonal field of view, classic wide lens character, camera 4 meters away at hip height, low and close with slight upward angle, minimal movement. Full body in frame with headroom above and the cobbles beneath his feet; his face is small in frame, not a close-up. Street visible to both frame edges, deep readable depth, straight lines rectilinear.\",\n  \"perf\": \"Feet planted wide on the stones, both arms throwing sharp accents on the beat, the whole body carrying the line rather than the face. He looks down and slightly to one side at his shadow across the paving, lifting his eyes to the far end of the street as the phrase peaks.\",\n  \"emo\": \"physical, owning the street\"\n },\n {\n  \"move\": \"DOLLY IN\",\n  \"size\": \"MS\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"47 degree diagonal field of view, standard normal lens character, camera travelling forward fast from 7 to 4 meters at chest height along the line of the street, braking hard before the final beat. The frontages rush past on both sides with strong parallax, the parked car sliding out of frame, deep readable depth throughout.\",\n  \"perf\": \"Holding his ground as the camera charges in, feet planted wide on the cobbles, shoulders driving the beat, singing at full strength without flinching. His head is turned about forty-five degrees to his right, eyes fixed on the far end of the street past the edge of the frame.\",\n  \"emo\": \"braced, refusing to move\"\n },\n {\n  \"move\": \"CRANE UP\",\n  \"size\": \"WS\",\n  \"energy\": \"hi\",\n  \"motion\": \"dyn\",\n  \"cam\": \"84 degree diagonal field of view, classic wide lens character, camera rising on an arm from hip height to above head height while holding him in frame, 5 meters away. Full body in frame throughout with the cobbles and his long shadow spreading below him; his face is small in frame, not a close-up. Street lines stay rectilinear as the angle steepens.\",\n  \"perf\": \"Singing upward as the camera climbs away from him, arms opening outward from his sides, chest lifted, feet still. He looks up and off to one side, following the light coming down between the buildings, never turning to the camera.\",\n  \"emo\": \"opening out, letting go\"\n }\n]",
+        "custom_light": "low early morning sun coming straight down the length of the street from behind the subject, fixed in the same world position for every shot, throwing very long hard-edged shadows forward across the damp cobbles, a bright rim along his hair and shoulders while his face stays in soft open shade, bounce light coming back off the pale paving and the glass frontages to lift the shadow side, no beauty fill, no flat frontal key",
+        "custom_pose": "",
+        "free_scenes_json": "[\n {\n  \"scene\": 1,\n  \"sing\": false,\n  \"prompt\": \"Live-action, cinematic realism, filmic contrast, real grain. A wide stone-paved street closed to traffic, early on a bright morning, the cobbled paving still damp and shining, shuttered shopfronts and glass frontages running away on both sides, low sun coming straight down the length of the street and throwing very long shadows across the stones. The blue-grey supercar from <Picture 3> - the same body, the same paint, the same wheels as in <Picture 3> - its number plate blank and its bodywork carrying no writing, badges or sponsor markings of any kind stands parked across the middle of the paving where no car is ever meant to be. The camera travels slowly along its flank at knee height, from the rear wheel forward past the door to the nose, the low sun raking across the paint and the long shadow of the car stretching away over the cobbles. No person and no human face appear anywhere in the frame at any moment, and nobody is visible inside the car. Lighting: low early morning sun straight down the street, long hard-edged shadows forward across the damp cobbles, bright bounce coming back off the pale paving, no beauty fill. One continuous shot, no internal cut, no visible text.\"\n },\n {\n  \"scene\": 3,\n  \"sing\": false,\n  \"prompt\": \"Live-action, cinematic realism, filmic contrast, real grain. A wide stone-paved street closed to traffic, early on a bright morning, the cobbled paving still damp and shining, shuttered shopfronts and glass frontages running away on both sides, low sun coming straight down the length of the street and throwing very long shadows across the stones. The supercar from <Picture 5> is parked on the cobbles with both of its doors raised upward exactly as in <Picture 5>, number plate blank and no writing anywhere on the bodywork. The woman from <Picture 2> - the same face, long dark wavy hair, fitted burgundy knee-length dress and dark red heels as in <Picture 2> - stands framed in the open driver's door, one hand resting on the raised door, her gaze held far down the street into the low sun. The camera circles slowly around the front of the car at waist height through a quarter turn, keeping her and the raised doors together in frame while the morning light slides across the paint. She is the only person in the frame. Lighting: low early morning sun straight down the street, long hard-edged shadows forward across the damp cobbles, bright bounce coming back off the pale paving, no beauty fill. One continuous shot, no internal cut, no visible text.\"\n },\n {\n  \"scene\": 4,\n  \"sing\": false,\n  \"prompt\": \"Live-action, cinematic realism, filmic contrast, real grain. Inside the cabin of a parked supercar in the early morning, the interior exactly as in <Picture 4>: the same seats, the same steering wheel, the same dashboard and the same dark trim. Daylight comes in low through the windows and rakes across the seat backs and the rim of the wheel, picking out the stitching and the texture of the material. The camera drifts slowly across the cabin at seat height and settles on the empty driver's seat. No person and no human face appear anywhere in the frame at any moment, and both seats stay empty. Lighting: low morning sun entering from one side of the cabin, deep shade in the footwells, no artificial light. One continuous shot, no internal cut, no visible text.\"\n },\n {\n  \"scene\": 6,\n  \"sing\": false,\n  \"prompt\": \"Live-action, cinematic realism, filmic contrast, real grain. A wide stone-paved street closed to traffic, early on a bright morning, the cobbled paving still damp and shining, shuttered shopfronts and glass frontages running away on both sides, low sun coming straight down the length of the street and throwing very long shadows across the stones. Close on the hand of the woman from <Picture 2> - the same face, long dark wavy hair, fitted burgundy knee-length dress and dark red heels as in <Picture 2> - resting flat on the bonnet of the blue-grey supercar from <Picture 3> - the same body, the same paint, the same wheels as in <Picture 3> - its number plate blank and its bodywork carrying no writing, badges or sponsor markings of any kind, fingers spread, the low sun raking across the skin and the cold paint and picking out every edge. Higher in the frame and well out of focus, her face is turned away down the street. The camera holds completely still. She is the only person in the frame. Lighting: low early morning sun straight down the street, long hard-edged shadows forward across the damp cobbles, bright bounce coming back off the pale paving, no beauty fill. One continuous shot, no internal cut, no visible text.\"\n },\n {\n  \"scene\": 7,\n  \"sing\": false,\n  \"prompt\": \"Live-action, cinematic realism, filmic contrast, real grain. A wide stone-paved street closed to traffic, early on a bright morning, the cobbled paving still damp and shining, shuttered shopfronts and glass frontages running away on both sides, low sun coming straight down the length of the street and throwing very long shadows across the stones. The woman from <Picture 2> - the same face, long dark wavy hair, fitted burgundy knee-length dress and dark red heels as in <Picture 2> - walks away from the camera down the middle of the empty street, growing smaller with every step, her long shadow stretching back toward the camera across the cobbles and her silhouette rimmed by the low sun ahead of her. Her gaze stays ahead in the direction she is walking and she never turns back. The camera holds still at hip height and does not move. She is the only person in the frame. Lighting: low morning sun straight down the street ahead of her throwing a bright rim around her shoulders and hair, her front held in open shade, long hard shadows on the stones. One continuous shot, no internal cut, no visible text.\"\n }\n]",
+        "gaze": "varied"
       }
     },
     {
@@ -2835,6 +2872,191 @@
           ]
         }
       ]
+    },
+    {
+      "id": 9060,
+      "type": "VHS_LoadVideoPath",
+      "pos": [
+        2600,
+        0
+      ],
+      "size": [
+        320,
+        200
+      ],
+      "flags": {},
+      "order": 70,
+      "mode": 0,
+      "title": "Nap lai MV vua render",
+      "properties": {
+        "Node name for S&R": "VHS_LoadVideoPath"
+      },
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": 60,
+          "widget": {
+            "name": "video"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            61
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            62
+          ],
+          "slot_index": 2
+        },
+        {
+          "name": "video_info",
+          "type": "VHS_VIDEOINFO",
+          "links": null
+        }
+      ],
+      "widgets_values": {
+        "video": "",
+        "force_rate": 0,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff"
+      }
+    },
+    {
+      "id": 9061,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        2960,
+        0
+      ],
+      "size": [
+        420,
+        520
+      ],
+      "flags": {},
+      "order": 80,
+      "mode": 0,
+      "title": "Xem MV tai cho",
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 61
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 62,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": null
+        }
+      ],
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "MV_PREVIEW",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": false
+      }
+    },
+    {
+      "id": 9062,
+      "type": "MVChainReset",
+      "pos": [
+        1740,
+        1010
+      ],
+      "size": [
+        420,
+        130
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "title": "Mot thu muc duy nhat - tu don truoc moi lan chay",
+      "properties": {
+        "Node name for S&R": "MVChainReset"
+      },
+      "inputs": [
+        {
+          "name": "prompt_plan",
+          "type": "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN",
+          "link": 65,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "chain_id",
+          "type": "STRING",
+          "links": [
+            63
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "base_seed",
+          "type": "INT",
+          "links": [
+            66
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "report",
+          "type": "STRING",
+          "links": null,
+          "slot_index": 2
+        }
+      ],
+      "widgets_values": [
+        "my_mv",
+        "per_prompt",
+        424242,
+        false,
+        true
+      ],
+      "color": "#6d3f71",
+      "bgcolor": "#381f3b",
+      "widgets_values_named": {
+        "chain_id": "mv",
+        "naming": "per_prompt",
+        "base_seed": 424242,
+        "reset_before_run": false,
+        "keep_finished_master": true
+      }
     }
   ],
   "links": [
@@ -3277,6 +3499,62 @@
       11,
       24,
       "AUDIO"
+    ],
+    [
+      60,
+      11,
+      0,
+      9060,
+      0,
+      "STRING"
+    ],
+    [
+      61,
+      9060,
+      0,
+      9061,
+      0,
+      "IMAGE"
+    ],
+    [
+      62,
+      9060,
+      2,
+      9061,
+      1,
+      "AUDIO"
+    ],
+    [
+      63,
+      9062,
+      0,
+      11,
+      25,
+      "STRING"
+    ],
+    [
+      64,
+      7001,
+      5,
+      11,
+      26,
+      "STRING"
+    ],
+    [
+      65,
+      10,
+      0,
+      9062,
+      0,
+      "H3_T8_MV_VOCAL_LOCK_PROMPT_PLAN"
+    ],
+    [
+      66,
+      9062,
+      1,
+      11,
+      27,
+      "INT"
     ]
   ],
   "groups": [

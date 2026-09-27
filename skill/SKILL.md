@@ -188,21 +188,30 @@ Over 100 MB, also produce a 960p copy for quick viewing and keep the original.
 
 ### A. Preview the scene plan — no GPU
 
-Bypass `MV Renderer Multi-Ref` with **Ctrl+B**, Run, read the table on
-`PreviewAny`. Change `seed` and run again until it looks right.
+Select `MV Renderer Multi-Ref` **and** the two view-on-canvas nodes after it
+(`VHS_LoadVideoPath`, `VHS_VideoCombine`), bypass all three with **Ctrl+B**, Run,
+read the table on `PreviewAny`. Bypassing only the renderer leaves the viewer
+branch without its input and it shows red. Change `seed` and run again until it
+looks right.
 
 It costs no GPU time at all. This replaces rendering test clips.
 
+The table shows `sing`, `POSING` or `FREE` for every scene. Angle choice follows
+the **audio energy** of each scene, not the setting prompt — the same song gives
+the same angles whatever the setting says; `seed` only breaks ties.
+
 ### B. Short excerpt
 
-Change `end_time` on **both** `AudioCrop` nodes and use a new `chain_id`.
+Change `end_time` on **both** `AudioCrop` nodes and Run. MV Chain Reset clears
+the chain folder, so there is no `chain_id` to change.
 
 A short run costs **more** per scene — the diffusion model reloads for every
 scene, and that fixed cost is spread over fewer scenes. Prefer mode A.
 
 ### C. Full song
 
-`start_time` `0:00`, `end_time` = song length minus 1–2 seconds, new `chain_id`.
+`start_time` `0:00`, `end_time` = song length minus 1–2 seconds. If it stops
+halfway, turn `reset_before_run` off on MV Chain Reset and Run again to resume.
 
 | `max_scene_seconds` | Scenes in a 2:43 song |
 |---|---|
@@ -210,7 +219,62 @@ scene, and that fixed cost is spread over fewer scenes. Prefer mode A.
 | 6.0 | ~27 |
 
 H3's training range is ~124–362 frames (5.2–15.1 s). Scenes of 2.5–3.5 s
-(60–84 frames) sit **below** that and still look fine.
+(60–84 frames) are **not** rendered that short: the planner renders at least
+124 frames, inside the training range, and trims afterwards
+(`render_frame_count = align_frame_count(max(124, frame_count))`). That is why
+they look fine — and why a short scene costs as much as a 5-second one.
+
+---
+
+## Gaze — the character does not have to face the lens
+
+`gaze = varied` (the default) on MV Auto Director. Singing scenes get a
+rotating gaze — 45° either side, fully side-on at 90° either side, eyes lowered,
+now and then the lens — and the renderer lifts T8's frontal-face rule. `lens`
+restores the old lock. Details in the README. Side-on lip-sync is untested:
+check the first renders.
+
+When writing your own angles, state where the eyes **are**, never where they
+are not. Never write `profile` — T8 rewrites it; write *"face seen side-on"*.
+
+## Free scenes — replacing the Ultra Speed workflow for MVs
+
+One MV chain can now hold shots the lip-sync template forbids: a car with nobody
+in it, a second character, a camera circling an object. List them in
+`free_scenes_json` with a complete prompt each (README → Free scenes).
+
+Workflow for 1–2 s cutaways on the beat:
+
+1. Measure the mix and find the accents (Step 2)
+2. `manual_boundaries_json` on the planner — every cut of the section, a 1.2 s
+   pair of cuts at each accent, in seconds **relative to the AudioCrop start**.
+   It replaces automatic splitting; it does not add to it.
+3. Preview → read the scene numbers of the short scenes
+4. `free_scenes_json` with those numbers
+5. Preview again → the rows read `FREE` → render
+
+Each free prompt must carry the MV's setting and light sentences, a
+`<Picture N>` tag for every person in it, and for an empty shot the line *"No
+person and no human face appear anywhere in the frame at any moment."*
+
+A second character's picture reaches only the scenes whose prompt names it, so
+wiring her into `ref_image_2` for the cutaways does not put her into the lead's
+singing scenes.
+
+3–6 cutaways per song. Each is still a whole scene: a model reload, and at
+least 124 frames rendered then trimmed.
+
+Keep the Ultra Speed workflow for standalone clips with no song, where the
+model's own sound effects are the point — an MV always has the song laid over.
+
+## One output folder
+
+MV Chain Reset feeds a fixed `chain_id` (`mv`) and clears its folder before each
+run, keeping the finished master in `_finished/`. No more inventing names.
+
+The workflow shows the finished MV on the canvas. That viewer re-decodes the
+whole video into RAM — about 12 GB for a 2:43 song at 1344×768; bypass it if
+the machine struggles.
 
 ---
 

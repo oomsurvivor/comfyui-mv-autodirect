@@ -20,9 +20,31 @@ MV Auto Director's custom_global_prompt and it flows down into every scene.
 """
 import contextlib
 import hashlib
+import json
+import re
 import sys
 
 MAX_IMAGES, MAX_VIDEOS, MAX_AUDIOS = 9, 3, 3
+
+# Written into a scene's camera field by MV Auto Director (free_scenes_json).
+FREE_MARKER = re.compile(r"\bFREESCENE\d{2,3}[0-9A-F]{8}\b")
+
+# gaze="varied": T8 pins every singing scene to a frontal face with these two
+# sentences (mv_lipsync_advanced.py, V3 route). Left in, they fight a side-on
+# gaze and the model turns the head back to camera. Swapped at conditioning
+# time, after T8 has already validated the plan with the original wording.
+T8_FACE_RULES = (
+    ("<Subject 1> stays in a medium close-up, front-facing or three-quarter face view; "
+     "the full mouth is never cropped, covered, turned away, or motion-blurred.",
+     "<Subject 1> stays in a medium close-up, his face shown from whatever angle the shot "
+     "calls for, including fully side-on; the mouth is never cropped, covered, or "
+     "motion-blurred."),
+    ("The full face and unobstructed mouth remain visible for the entire shot; lips, jaw, "
+     "tongue visibility, cheeks, and facial muscles articulate every audible phoneme",
+     "The unobstructed mouth stays readable for the entire shot, and in a side-on view the "
+     "lips and jaw read clearly in outline; lips, jaw, cheeks, and facial muscles "
+     "articulate every audible phoneme"),
+)
 
 def _sampler_options():
     """Sampler/scheduler lists taken FROM T8, not from comfy.samplers.
@@ -111,13 +133,188 @@ def _is_ref_image_dict(obj):
     return isinstance(obj, dict) and any(str(k).startswith("ref_image") for k in obj)
 
 
+def _is_audio(obj):
+    return isinstance(obj, dict) and "waveform" in obj and "sample_rate" in obj
+
+
+def _silence(audio):
+    import torch
+    return {"waveform": torch.zeros_like(audio["waveform"]),
+            "sample_rate": audio["sample_rate"]}
+
+
+def _apply_free(args, kwargs, free, applied):
+    """Free scene: swap T8's whole prompt for the user's own one.
+
+    The prompt is found by CONTENT - the string argument carrying a marker -
+    not by position. A non-singing free scene also gets silence in place of
+    the vocal, so the model is not pushed into inventing a singer for a shot
+    that should have none. The finished MV still gets the full song muxed over
+    it by T8, so nothing audible is lost.
+    """
+    slots = [("arg", i) for i, a in enumerate(args) if isinstance(a, str)]
+    if isinstance(kwargs.get("prompt"), str):
+        slots.append(("kw", "prompt"))
+    for where, key in slots:
+        text = args[key] if where == "arg" else kwargs[key]
+        found = FREE_MARKER.search(text)
+        if not found:
+            continue
+        spec = free.get(found.group(0))
+        if spec is None:
+            raise ValueError(
+                "MV Renderer Multi-Ref: scene carries free-scene marker %s but no prompt for "
+                "it arrived. Connect MV Auto Director's free_scenes output to this node's "
+                "free_scenes input." % found.group(0))
+        if where == "arg":
+            args[key] = spec["prompt"]
+        else:
+            kwargs[key] = spec["prompt"]
+        if not spec["sing"]:
+            for i, a in enumerate(args):
+                if _is_audio(a):
+                    args[i] = _silence(a)
+            for k, v in list(kwargs.items()):
+                if _is_audio(v):
+                    kwargs[k] = _silence(v)
+        applied.append(spec["scene"])
+        return True
+    return False
+
+
+def _relax_face_rules(args, kwargs, relaxed):
+    """gaze='varied': let a singing scene show the face from any angle."""
+    slots = [("arg", i) for i, a in enumerate(args) if isinstance(a, str)]
+    if isinstance(kwargs.get("prompt"), str):
+        slots.append(("kw", "prompt"))
+    for where, key in slots:
+        text = args[key] if where == "arg" else kwargs[key]
+        new = text
+        for old, rep in T8_FACE_RULES:
+            new = new.replace(old, rep)
+        if new != text:
+            if where == "arg":
+                args[key] = new
+            else:
+                kwargs[key] = new
+            relaxed.append(1)
+            return
+
+
+_PICTURE_TAG = re.compile(r"<?\s*\b(?:picture|image)\s+(\d+)\b\s*>?", re.I)
+
+
+def _named_pictures(args, kwargs):
+    """Highest <Picture N> the scene's prompt names (1 if none).
+
+    Extra reference images go only to scenes that name them. Without this, a
+    second character's picture wired in for a cutaway would ride along into
+    every lip-sync scene of the lead, unnamed, and could bleed into his face or
+    put her in his shots. Numbering is kept: a scene naming <Picture 3> gets
+    pictures 2 and 3. A setting that names <Picture 2> in custom_global_prompt
+    puts the tag in every scene, so that usage is unchanged.
+    """
+    texts = [a for a in args if isinstance(a, str)]
+    if isinstance(kwargs.get("prompt"), str):
+        texts.append(kwargs["prompt"])
+    prompt = max(texts, key=len) if texts else ""
+    return max([1] + [int(n) for n in _PICTURE_TAG.findall(prompt)])
+
+
+_VIDEO_TAG = re.compile(r"(<?\s*\bvideo\s+)(\d+)(\b\s*>?)", re.I)
+
+
+def _prompt_slot(args, kwargs):
+    """Where the scene prompt sits: the longest string argument, or kwargs."""
+    if isinstance(kwargs.get("prompt"), str):
+        return ("kw", "prompt")
+    slots = [(len(a), i) for i, a in enumerate(args) if isinstance(a, str)]
+    return ("arg", max(slots)[1]) if slots else (None, None)
+
+
+def _scene_videos(args, kwargs, videos, video_audios):
+    """Reference videos for THIS scene only: exactly the ones its prompt names.
+
+    Unlike pictures, a scene gets only the videos it names - not every lower
+    number too - because each clip is a different motion and an unnamed one
+    would bleed its movement into the shot. They are renumbered 1..k in the
+    order named and the prompt's tags are rewritten to match, so a cutaway that
+    names only <Video 3> receives that clip as <Video 1>. A lip-sync scene that
+    names none receives none, and skips the per-scene VAE encode of every clip.
+    """
+    where, key = _prompt_slot(args, kwargs)
+    if where is None or not videos:
+        return [], {}
+    text = args[key] if where == "arg" else kwargs[key]
+    named = sorted({int(n) for _, n, _ in _VIDEO_TAG.findall(text)
+                    if 1 <= int(n) <= len(videos)})
+    if not named:
+        return [], {}
+    remap = {old: new for new, old in enumerate(named, 1)}
+    new_text = _VIDEO_TAG.sub(
+        lambda m: m.group(1) + str(remap.get(int(m.group(2)), int(m.group(2)))) + m.group(3),
+        text)
+    if where == "arg":
+        args[key] = new_text
+    else:
+        kwargs[key] = new_text
+    scene_v = [videos[old - 1] for old in named]
+    scene_a = {"ref_video_audio_%d" % new: video_audios["ref_video_audio_%d" % old]
+               for old, new in remap.items() if "ref_video_audio_%d" % old in video_audios}
+    return scene_v, scene_a
+
+
+_STRICT_TAG = re.compile(r"<\s*(picture|image|video)\s+(\d+)\s*>", re.I)
+
+
+def _free_tag_problems(free, n_pictures, n_videos):
+    """Free-scene prompts that name media which is not wired in.
+
+    T8 only checks tags inside build_conditioning, i.e. when that scene's turn
+    comes - after every earlier scene has already rendered. Checked here instead,
+    a bypassed loader stops the job before the GPU starts.
+    """
+    out = []
+    for spec in sorted(free.values(), key=lambda s: s.get("scene", 0)):
+        for kind, num in _STRICT_TAG.findall(spec.get("prompt", "")):
+            n, kind = int(num), kind.lower()
+            have = n_videos if kind == "video" else n_pictures
+            if n > have:
+                noun = "video" if kind == "video" else "picture"
+                out.append("free scene %s names <%s %d> but %d %s%s connected"
+                           % (spec.get("scene"), noun.title(), n, have, noun,
+                              " is" if have == 1 else "s are"))
+    return list(dict.fromkeys(out))
+
+
+def _plan_markers(plan):
+    """Every free-scene marker in the prompt plan, so a missing wire fails
+    BEFORE the GPU starts rather than halfway through the chain."""
+    out = set()
+    for seg in (plan or {}).get("segments", []) or []:
+        out.update(FREE_MARKER.findall(str(seg.get("prompt", ""))))
+    return out
+
+
 @contextlib.contextmanager
-def _inject(mod, images, videos, video_audios, audios):
-    """Wrap build_conditioning inside T8's module namespace to inject refs."""
+def _inject(mod, images, videos, video_audios, audios, free=None, applied=None,
+            vary_gaze=False, relaxed=None, shown=None):
+    """Wrap build_conditioning inside T8's module namespace to inject refs,
+    swap in free-scene prompts, and lift the frontal-face rule."""
     original = mod.build_conditioning
+    all_videos, all_video_audios = videos, video_audios
 
     def wrapped(*args, **kwargs):
         args = list(args)
+        swapped = bool(free) and _apply_free(
+            args, kwargs, free, applied if applied is not None else [])
+        if vary_gaze and not swapped:
+            _relax_face_rules(args, kwargs, relaxed if relaxed is not None else [])
+        scene_images = images[:max(0, _named_pictures(args, kwargs) - 1)]
+        videos, video_audios = _scene_videos(args, kwargs, all_videos, all_video_audios)
+        if shown is not None:
+            shown.append("%dp%s" % (1 + len(scene_images),
+                                   "+%dv" % len(videos) if videos else ""))
         # Locate the ref_images dict by CONTENT rather than argument position,
         # so a signature change upstream does not break this.
         at = None
@@ -128,7 +325,7 @@ def _inject(mod, images, videos, video_audios, audios):
         if at is None:
             if _is_ref_image_dict(kwargs.get("ref_images")):
                 d = dict(kwargs["ref_images"])
-                for n, img in enumerate(images, len(d) + 1):
+                for n, img in enumerate(scene_images, len(d) + 1):
                     d["ref_image_%d" % n] = img
                 kwargs["ref_images"] = d
                 if videos:
@@ -142,7 +339,7 @@ def _inject(mod, images, videos, video_audios, audios):
             return original(*args, **kwargs)
 
         d = dict(args[at])
-        for n, img in enumerate(images, len(d) + 1):
+        for n, img in enumerate(scene_images, len(d) + 1):
             d["ref_image_%d" % n] = img
         args[at] = d
         # Signature order: ref_images, ref_videos, ref_video_audios, ref_audios.
@@ -228,6 +425,10 @@ class MVRendererMultiRef:
         for i in range(1, MAX_AUDIOS + 1):
             opt["ref_audio_%d" % i] = ("AUDIO", {
                 "tooltip": "Reference audio %d. Name it as <Audio %d>." % (i, i)})
+        opt["free_scenes"] = ("STRING", {
+            "forceInput": True,
+            "tooltip": "From MV Auto Director's free_scenes output. Scenes listed there are "
+                       "rendered from your own full prompt instead of the lip-sync template."})
         return {"required": req, "optional": opt}
 
     RETURN_TYPES = ("STRING", "STRING", "INT", "STRING", "STRING")
@@ -266,15 +467,53 @@ class MVRendererMultiRef:
             raise ValueError("At most %d images including reference_image, got %d"
                              % (MAX_IMAGES, total_img))
 
+        # T8 does not know this input - take it out before **kw reaches T8.
+        free_text = (kw.pop("free_scenes", None) or "").strip()
+        try:
+            notes = json.loads(free_text) if free_text else {}
+        except Exception as e:
+            raise ValueError("MV Renderer Multi-Ref: free_scenes is not valid JSON: %s" % e)
+        free = notes.get("scenes", {}) or {}
+        vary_gaze = notes.get("gaze") == "varied"
+        wanted = _plan_markers(kw.get("mv_vocal_lock_prompt_plan"))
+        missing = sorted(wanted - set(free))
+        if missing:
+            raise ValueError(
+                "MV Renderer Multi-Ref: the scene plan has %d free scene(s) but their prompts "
+                "did not arrive (%s). Connect MV Auto Director's free_scenes output to this "
+                "node's free_scenes input." % (len(missing), ", ".join(missing)))
+        problems = _free_tag_problems({m: free[m] for m in wanted if m in free},
+                                      1 + len(images), len(videos))
+        if problems:
+            raise ValueError(
+                "MV Renderer Multi-Ref: checked before rendering - " + "; ".join(problems)
+                + ". A reference loader is probably bypassed: select it, Ctrl+B to enable it "
+                "and pick the file, or remove the tag from the free scene prompt.")
+
         mod = _t8_module()
         fp = _fingerprint(images + videos + audios)
+        applied, relaxed, shown = [], [], []
 
-        with _inject(mod, images, videos, vauds, audios):
+        with _inject(mod, images, videos, vauds, audios, free=free, applied=applied,
+                     vary_gaze=vary_gaze, relaxed=relaxed, shown=shown):
             video_path, manifest_path, completed, status, report = (
                 mod.run_local_mv_vocal_lock_visual_in_node_loop(**kw))
 
         note = ("refs: %d images (<Picture 1..%d>), %d videos, %d audios | extra-ref fingerprint: %s"
                 % (total_img, total_img, len(videos), len(audios), fp))
+        if vary_gaze:
+            note += ("\ngaze varied: T8 frontal-face rule lifted in %d rendered scene(s)"
+                     % len(relaxed))
+        if (images or videos) and shown:
+            note += ("\nrefs per rendered scene, only those the prompt names "
+                     "(p = pictures, v = videos): %s" % ",".join(shown))
+        if wanted:
+            done = sorted(set(applied))
+            note += ("\nfree scenes: %d in plan, rendered this run: %s"
+                     % (len(wanted), ",".join(map(str, done)) if done else "none"))
+            if len(done) < len(wanted):
+                note += (" (scenes already accepted in an earlier run are not re-rendered, "
+                         "so they do not show here)")
         if images or videos or audios:
             note += ("\nNOTE: the extra references are NOT part of the resume contract. "
                      "Changing them while keeping the same chain_id silently reuses the old "

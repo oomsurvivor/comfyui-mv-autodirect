@@ -1,0 +1,56 @@
+[
+  {
+    "move": "WHIP_RL",
+    "size": "MCU",
+    "energy": "hi",
+    "motion": "dyn",
+    "cam": "58 degree diagonal field of view, 28mm lens character, camera 2 meters away at chest level, handheld. Hard whip pan travelling right to left, the opening third of the shot a pure horizontal motion-blur streak with everything behind the subject smeared into bands of colour, then the move decelerates hard and settles with the subject centred. Small overshoot and a settle wobble on the landing frame.",
+    "perf": "Caught in the middle of an action already under way, which carries on past the end of the shot. The eyes stay off to one side, tracking something moving past the edge of the frame, and the head follows that line at its own unhurried pace. Shoulders loose, one hand still finishing a gesture near the chest.",
+    "emo": "Absorbed in the moment, unaware of being watched."
+  },
+  {
+    "move": "WHIP_LR",
+    "size": "MS",
+    "energy": "hi",
+    "motion": "dyn",
+    "cam": "72 degree diagonal field of view, 22mm lens character, camera 1.6 meters away at chest level, handheld. Hard whip pan travelling left to right, everything streaked into horizontal blur for the first frames, braking into a stable frame with the subject slightly off-centre toward the left third of the frame, negative space open to the right.",
+    "perf": "Mid-stride and leaning into the walk, weight already on the front foot, gaze fixed low and ahead on the ground a few paces away. The body keeps travelling as the pan brakes, so the frame catches motion rather than a held position.",
+    "emo": "Driven, inward, going somewhere."
+  },
+  {
+    "move": "CRASH_IN",
+    "size": "CU",
+    "energy": "hi",
+    "motion": "dyn",
+    "cam": "Starts at 64 degree diagonal field of view and snaps to 24 degrees in under half a second, a violent crash zoom straight down the lens axis, camera locked on a tripod with no lateral drift. Radial blur streaks outward from the centre during the push, resolving into a hard tight framing on the face with the eyes dead centre and razor sharp.",
+    "perf": "Completely still and self-contained, eyes lowered and resting on a point off to one side at roughly forty-five degrees. A slow blink, jaw relaxed, a small breath moving the shoulders. The attention stays on that private point throughout.",
+    "emo": "Private, lost in thought."
+  },
+  {
+    "move": "ROLL_SNAP",
+    "size": "MCU",
+    "energy": "hi",
+    "motion": "dyn",
+    "cam": "58 degree diagonal field of view, 28mm lens character, camera 2 meters away at eye level. The camera rolls hard about the lens axis, tilting the horizon roughly thirty degrees in a fast snap and stopping dead, holding the canted angle for the rest of the shot with no further movement. Brief rotational blur during the snap only.",
+    "perf": "Head turned away to one side, attention on something out past the shoulder, the face held at a three-quarter angle. Body stays upright while the horizon tips around it. As the roll stops, a small shift of weight and a slight lowering of the chin, attention still out to the side.",
+    "emo": "Distracted, somewhere else entirely."
+  },
+  {
+    "move": "SWISH_UP",
+    "size": "MS",
+    "energy": "hi",
+    "motion": "dyn",
+    "cam": "72 degree diagonal field of view, 22mm lens character, camera 1.8 meters away, starting low near knee height and swishing vertically upward to chest level in a single fast tilt, vertical motion blur smearing the frame during the rise, braking to a clean stable hold with the subject filling the middle of the frame.",
+    "perf": "Rising out of a low crouch and straightening up in one continuous movement, eyes tracking upward along the line of their own motion toward a point high and ahead. Arms swing outward on the way up and settle naturally at the sides. The gaze stays raised and distant at the top.",
+    "emo": "Opening up, quietly resolved."
+  },
+  {
+    "move": "WHIP_WIDE",
+    "size": "WS",
+    "energy": "hi",
+    "motion": "dyn",
+    "cam": "84 degree diagonal field of view, 18mm lens character, camera 4 meters away at hip level. Fast horizontal whip across the space, the frame dissolving into streaked bands during the travel, then braking hard into a stable hold. Full body in frame with headroom above and floor visible below, the subject small enough that the whole stance and both arms read clearly.",
+    "perf": "Moving across the space in a single continuous action with the whole body engaged, gaze held in the direction of travel. Feet, hips and shoulders all committed to the movement rather than arranged for the frame. The action carries on past the end of the shot.",
+    "emo": "Physical and unposed, caught mid-action."
+  }
+]

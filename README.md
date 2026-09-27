@@ -169,6 +169,35 @@ Target distribution: `CU 12%`, `MCU 24%`, `MS 31%`, `WS 33%`.
 | `pose_scenes` | `"3,7,12"` or `"3-5,9"` — force those scenes to stop lip-syncing |
 | `pose_every` | every Nth scene becomes a posing scene; ignored if `pose_scenes` is set |
 | `busy_background` | `auto` reads your scene description and decides |
+| `free_scenes_json` | scenes rendered from your own full prompt — see [Free scenes](#free-scenes) |
+| `gaze` | `varied` (default) or `lens` — see below |
+
+Connect the sixth output, `free_scenes`, to MV Renderer Multi-Ref. It carries
+both the free scenes and the gaze mode.
+
+### Gaze
+
+Every one of the 51 built-in angles locks the eyes on the lens, twice over: a
+shared sentence (*"His eyes stay locked on the lens … straight down the barrel"*)
+plus an angle-specific clause (*"delivers to the lens"*). On top of that, T8's
+template pins every singing scene to *"front-facing or three-quarter face view"*.
+
+`gaze = varied` lifts both. The director strips every lens-directed clause from
+the built-in angles and gives each singing scene a definite gaze instead,
+rotating through six: 45° left, **fully side-on 90° right**, eyes lowered, 45°
+right, straight into the lens, **fully side-on 90° left**. The renderer swaps
+T8's frontal-face sentences for *"face shown from whatever angle the shot calls
+for, including fully side-on … lips and jaw read clearly in outline"*.
+
+Gaze lines are written as positive statements. *"Never looks at the camera"*
+still plants the camera in the prompt, and a vague gaze drifts back to the lens.
+The word `profile` is avoided — T8 rewrites it to `three-quarter face view`.
+
+Only the built-in angles change. Your own `custom_angles_json` keeps exactly the
+words you wrote. `gaze = lens` restores the old behaviour.
+
+Untested at render time: T8 restricted singing to frontal views on purpose, and
+lip-sync from a side-on view may be weaker. Check the first side-on scenes.
 
 ### Why `busy_background` matters
 
@@ -244,20 +273,119 @@ That splits **face / outfit / location** into separate images. Referencing a
 picture you did not connect stops the job with a clear message rather than
 guessing.
 
+Numbering follows the **connected** slots, gaps closed: wire `ref_image_2` and
+`ref_image_4` but leave `ref_image_3` empty, and the picture in slot 4 becomes
+`<Picture 3>`. Fill the slots in order.
+
+Extra pictures go **only to the scenes that name them**. For each scene the
+renderer finds the highest `<Picture N>` in its prompt and passes pictures 2…N,
+keeping the numbering; a scene that names none gets only `<Picture 1>`. A second
+character wired in for a few cutaways therefore stays out of the lead's
+lip-sync scenes. Naming a picture in `custom_global_prompt` puts the tag in
+every scene, so that usage works as before. `report` lists how many pictures
+each rendered scene received.
+
 ### Things that will bite you
 
 - **The extra references are not part of the resume contract.** Swapping an
   outfit image while keeping the same `chain_id` silently reuses the old
   scenes. The node prints a fingerprint of the extra reference set in `report`
-  — when it changes, change `chain_id`.
+  — when it changes, change `chain_id`, or let MV Chain Reset clear the folder.
 - **More images of the same person means more consistency, not more variety.**
   For variety, give each image a distinct job and name it in the prompt.
-- **Reference video is truncated to the scene length**, then aligned down to
-  `17n+5` frames. A 2.9 s scene uses 56 frames (2.33 s) of your clip and
-  discards the rest. Minimum 5 frames. It is also re-encoded through the VAE
+- **Reference video is truncated to the scene's render length**, then aligned
+  down to `17n+5` frames. Every scene renders at least 124 frames and is trimmed
+  afterwards, so a 2.9 s scene uses the first 124 frames (5.2 s) of your clip and
+  discards the rest. Every scene sees the **same opening** of the clip — it is
+  not time-aligned with the song. Minimum 5 frames. It is also re-encoded through the VAE
   once per scene, so it costs time on every scene.
 - **In an MV chain the driving vocal is already `<Audio 1>`**, so extra
   `ref_audio` slots are rarely worth it.
+
+### Free scenes
+
+Every singing scene T8 builds carries a one-person contract — *"Exactly one
+visible person and exactly one visible human face exist in the entire frame"* —
+and T8 checks it is still there before rendering. No switch turns it off. So an
+MV chain could never show a car on its own, a second character, or a shot that
+circles an object.
+
+Free scenes can. You write a whole prompt, the way you would for the Ultra Speed
+workflow, and that prompt is what the model receives for that scene:
+
+```json
+[
+  {"scene": 3, "sing": false, "prompt": "Night, a wide avenue after rain ... A low red supercar sweeps past ... No person and no human face appear anywhere in the frame at any moment."},
+  {"scene": 7, "sing": false, "prompt": "... The woman from <Picture 2> leans against the car ... The camera circles slowly around the front of the car ..."}
+]
+```
+
+| Field | |
+|---|---|
+| `scene` | 0-based, the same numbers as the preview table |
+| `prompt` | the complete prompt — not word-filtered, no 500-character limit |
+| `sing` | default `false`: the scene stops lip-syncing and the model is fed silence instead of the vocal, so it is not pushed into inventing a singer. `true` keeps the vocal; name `<Audio 1>` in the prompt |
+
+How it works, without touching T8:
+
+1. MV Auto Director writes a marker such as `FREESCENE0110F40AB1` into that
+   scene's camera field. It passes through the director untouched.
+2. T8 validates the plan with its original prompt — contract intact.
+3. The renderer, wrapping `build_conditioning`, sees the marker and swaps in
+   your prompt just before the text encoder.
+
+The marker carries a hash of your prompt. Edit the prompt and the marker changes,
+the plan changes, the resume contract changes — an edited free scene is never
+silently reused from an old run. Forget the `free_scenes` wire and the renderer
+stops **before** the GPU starts, naming the missing scenes.
+
+Your prompt replaces T8's entirely, so it has to carry everything: the setting,
+the light, and a `<Picture N>` tag for every person in it. Copy the MV's own
+setting and light sentences in, or the cutaway will not match the colour of the
+scenes around it.
+
+To get a 1–2 second cutaway, set `manual_boundaries_json` on the scene planner
+(it replaces automatic splitting, so list every cut), preview to read the scene
+numbers, then list them here. Short scenes are not cheaper: the planner renders
+every scene at least 124 frames and trims afterwards.
+
+Untested at render time: a scene with no person at all. The model is built for
+a performer; silence in place of the vocal plus an explicit *"No person …
+appears"* is meant to hold it, but check the first render.
+
+---
+
+## Node 3 — MV Chain Reset
+
+T8 keeps every run's state in `output/minimax_h3_t8_long_video/<chain_id>/`.
+Reuse a finished `chain_id` and you get either the old video back in zero
+seconds, or `contains accepted segments from a different contract` if anything
+changed. The usual fix — a new name every run — litters the output folder.
+
+MV Chain Reset feeds `chain_id` to the renderer, so ComfyUI's data dependency
+guarantees it runs first. Its default `naming` mode, **`per_prompt`**, appends
+the `prompt_plan_hash` the V3 Visual Director already computes:
+
+| | |
+|---|---|
+| Edit any prompt | a **new** folder, rendered from scratch, the old video untouched |
+| Re-run after an interruption | continues where it stopped |
+| Re-run something already finished | returns it in seconds, and the report says `ALREADY RENDERED` |
+
+No names to invent, no contract errors, no takes lost. Wire the Visual
+Director's `mv_vocal_lock_prompt_plan` into this node's `prompt_plan` input —
+the same wire that feeds the renderer. Without it the node stops with a clear
+message rather than silently dropping the hash.
+
+The seed is part of the hash too, so a new seed is a new take beside the old
+one. Set it **on this node** and wire the `base_seed` output into the renderer's
+`base_seed` input: T8 counts that seed in its resume contract, so a seed changed
+on the renderer alone would collide with the existing folder and be refused.
+
+`reset_before_run` still wipes a folder on demand; the finished master is moved
+to `_finished/<name>_<timestamp>.mp4` first.
+
+`naming: fixed` restores the old behaviour: one folder, reused.
 
 ---
 
